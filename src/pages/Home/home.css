@@ -7,7 +7,7 @@
 }
 
 .form {
-  padding: 40px;
+  padding: 30px 40px 10px 40px;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -25,10 +25,40 @@
 }
 
 .form-input {
-  width: 50%;
+  width: 60%;
+}
+
+.form-address-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 60%;
+}
+
+.form-address-container input {
+  margin-right: 10px;
+  width: 55%;
+  margin-bottom: 10px;
+}
+
+.form-address-container button {
+  margin-left: 10px;
+  font-size: 15px;
+  font-weight: bolder;
 }
 
 .submit-button {
   text-align: center;
   margin-top: 20px;
+}
+
+.form-submit-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: 55px;
+}
+
+.form-submit-buttons button {
+  margin-right: 10px;
 }
