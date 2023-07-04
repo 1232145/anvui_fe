@@ -1,0 +1,11 @@
+.menu-item {
+    margin-bottom: 10px;
+    margin-left: 20px;
+    display: flex;
+    padding: 0px 8px;
+}
+
+.nav-menu {
+    margin: 0px;
+    padding: 0px;
+}

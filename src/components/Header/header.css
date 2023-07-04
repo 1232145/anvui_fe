@@ -1,0 +1,16 @@
+.header {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    transition: all 0.3s;
+}
+
+.nav-button {
+    margin-left: 15px;
+    transition: width 0.3s;
+    overflow: hidden;
+    white-space: nowrap;
+}
