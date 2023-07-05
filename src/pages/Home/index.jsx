@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './home.css'
-import { Form, Input, Button, Checkbox } from 'antd';
+import './home.css';
+import { componentToHex } from '../../tools/HexConverter';
+import { Form, Input, Button, Checkbox, ColorPicker } from 'antd';
 
 function Home() {
   const [data, setData] = useState({
@@ -46,27 +47,25 @@ function Home() {
   };
 
   const handleChange = (e, type, index) => {
-    //tickbox handle
-    if (tickBox.includes(type)) {
-      const value = e.target.checked;
-      let num = value ? 1 : 0;
-      setData(prev => ({ ...prev, [type]: num }));
-    }
-    //input field handle
-    else {
-      const value = e.currentTarget.value;
+    let value = null;
 
-      //if handle address
-      if (index >= 0) {
-        let addresses = [...data.address];
-        addresses[index][type] = value;
-        setData(prev => ({ ...prev, address: addresses }));
-      }
-      //handle other
-      else {
-        setData(prev => ({ ...prev, [type]: value }));
-      }
+    //color handle
+    if (type === 'color') {
+      let { r, g, b } = e.metaColor;
+      value = `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
     }
+    //tickbox handle
+    else if (tickBox.includes(type)) {
+      value = e.target.checked ? 1 : 0;
+    }
+    //dia chi/mang xa hoi handle
+    else if (index >= 0) {
+      value = [...data.address];
+      value[index][type] = e.currentTarget.value;
+      type = 'address';
+    }
+
+    setData(prev => ({ ...prev, [type]: value }));
   }
 
   const refreshPage = () => {
@@ -121,6 +120,10 @@ function Home() {
                 )
               })
             }
+          </Form.Item>
+
+          <Form.Item label="Màu chủ đạo" initialValue="">
+            <ColorPicker value={data.color} onChange={(e) => handleChange(e, 'color')}/>
           </Form.Item>
 
           <div className='form-checkbox'>
