@@ -123,10 +123,24 @@ function Home() {
             }
           </Form.Item>
 
+          <div className='form-checkbox'>
+            <Form.Item label="Hiển thị mã ghế" valuePropName="checked" >
+              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
+            </Form.Item>
+            <Form.Item label="Sử dụng iframe" valuePropName="checked" >
+              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
+            </Form.Item>
+            <Form.Item label="Sử dụng đa ngôn ngữ" valuePropName="checked" >
+              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
+            </Form.Item>
+            <Form.Item label="Ẩn box đặt vé web, app khách hàng" valuePropName="checked" >
+              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
+            </Form.Item>
+            <Form.Item label="Hiển thị ảnh tuyến trên app khách hàng" valuePropName="checked" >
+              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
+            </Form.Item>
+          </div>
 
-          <Form.Item label="Hiển thị mã ghế" valuePropName="checked">
-            <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
-          </Form.Item>
         </div>
 
         <div className='inner-form'>
@@ -142,17 +156,17 @@ function Home() {
         </div>
       </div>
       <div className='form-submit-buttons'>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" className='form-button'>
-              Lưu
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" className='form-button' onClick={() => refreshPage()}>
-              Huỷ
-            </Button>
-          </Form.Item>
-        </div>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" className='form-button'>
+            Lưu
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" className='form-button' onClick={() => refreshPage()}>
+            Huỷ
+          </Button>
+        </Form.Item>
+      </div>
     </Form>
   )
 }

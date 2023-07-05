@@ -62,3 +62,8 @@
 .form-submit-buttons button {
   margin-right: 10px;
 }
+
+.form-checkbox {
+  display: flex;
+  flex-direction: column;
+}
