@@ -1,8 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './home.css';
-import { componentToHex } from '../../tools/HexConverter';
-import { Form, Input, Button, Checkbox, ColorPicker } from 'antd';
+import { Form, Input, Button, Checkbox, Space } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 5,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 16,
+    },
+  },
+};
 
 function Home() {
   const [data, setData] = useState({
@@ -25,16 +44,19 @@ function Home() {
     bct_link: "",
     showSeatId: 0
   });
-
-  const tickBox = ['showSeatId'];
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const res = await axios.get('http://localhost:5000/home/1877');
       setData({ ...res.data, address: JSON.parse(res.data.address) });
     }
     catch (err) {
       console.log(err);
+    }
+    finally {
+      setLoading(false);
     }
   }
 
@@ -42,136 +64,146 @@ function Home() {
     fetchData();
   }, [])
 
-  const onFinish = () => {
-    console.log('Form values:', data);
+  const onFinish = (values) => {
+    console.log('Form values:', values);
   };
-
-  const handleChange = (e, type, index) => {
-    let value = null;
-
-    //color handle
-    if (type === 'color') {
-      let { r, g, b } = e.metaColor;
-      value = `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
-    }
-    //tickbox handle
-    else if (tickBox.includes(type)) {
-      value = e.target.checked ? 1 : 0;
-    }
-    //dia chi/mang xa hoi handle
-    else if (index >= 0) {
-      value = [...data.address];
-      value[index][type] = e.currentTarget.value;
-      type = 'address';
-    }
-
-    setData(prev => ({ ...prev, [type]: value }));
-  }
 
   const refreshPage = () => {
     window.location.reload();
     window.scrollTo(0, 0);
   }
 
-  const deleteAddress = (index) => {
-    console.log("Deleting address: " + index);
-  }
-
   return (
-    <Form onFinish={onFinish}>
-      <div className='form'>
-        <div className='inner-form'>
-          <Form.Item label="Tên công ty" initialValue="">
-            <Input className='form-input' value={data.business} onChange={(e) => handleChange(e, 'business')} />
-          </Form.Item>
+    <>
+      {
+        loading ?
+          (
+            <div>Loading</div>
+          )
+          :
+          (
+            <div>
+              <Form onFinish={onFinish} initialValues={data} name='dynamic_form_nest_item' {...formItemLayout}>
+                <div className='form'>
+                  <div className='inner-form'>
+                    <Form.Item label="Tên công ty" name='business'>
+                      <Input className='form-input' />
+                    </Form.Item>
 
-          <Form.Item label="Giấy chứng nhận DKKD" initialValue="">
-            <Input className='form-input' value={data.dkkd} onChange={(e) => handleChange(e, 'dkkd')} />
-          </Form.Item>
-          <Form.Item label="Đường dẫn DK BCT" initialValue="">
-            <Input className='form-input' value={data.bct_link} onChange={(e) => handleChange(e, 'bct_link')} />
-          </Form.Item>
-          <Form.Item label="Giới thiệu chung" initialValue="">
-            <Input className='form-input' value={data.short_intro} onChange={(e) => handleChange(e, 'short_intro')} />
-          </Form.Item>
+                    <Form.Item label="Giấy chứng nhận DKKD" name='dkkd'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                    <Form.Item label="Đường dẫn DK BCT" name='bct_link'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                    <Form.Item label="Giới thiệu chung" name='short_intro'>
+                    <Input.TextArea className='form-input' rows={4} />
+                    </Form.Item>
 
-          <Form.Item label="Số điện thoại" initialValue="">
-            <Input className='form-input' value={data.phone} onChange={(e) => handleChange(e, 'phone')} />
-          </Form.Item>
-          <Form.Item label="Hotline" initialValue="">
-            <Input className='form-input' value={data.hotline} onChange={(e) => handleChange(e, 'hotline')} />
-          </Form.Item>
-          <Form.Item label="Email" initialValue="">
-            <Input className='form-input' value={data.email} onChange={(e) => handleChange(e, 'email')} />
-          </Form.Item>
-          <Form.Item label="Map" initialValue="">
-            <Input.TextArea className='form-input' rows={8} value={data.map} onChange={(e) => handleChange(e, 'map')} />
-          </Form.Item>
+                    <Form.Item label="Số điện thoại" name='phone'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                    <Form.Item label="Hotline" name='hotline'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                    <Form.Item label="Email" name='email'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                    <Form.Item label="Map" name='map'>
+                      <Input.TextArea className='form-input' rows={5} />
+                    </Form.Item>
 
-          <Form.Item label="Địa chỉ">
-            {
-              data.address.map((item, index) => {
-                return (
-                  <div className='form-address-container' key={index}>
-                    <Input className='form-input' value={item.key} onChange={(e) => handleChange(e, 'key', index)} />
-                    <Input className='form-input' value={item.value} onChange={(e) => handleChange(e, 'value', index)} />
-                    <Button type='primary' danger onClick={() => deleteAddress(index)}>-</Button>
+                    <Form.Item label='Địa chỉ'>
+                      <Form.List name="address">
+                        {(fields, { add, remove }) => (
+                          <>
+                            {fields.map(({ key, name, ...restField }) => (
+                              <Space
+                                key={key}
+                                style={{
+                                  display: 'flex',
+                                  marginBottom: 8,
+                                }}
+                                align="baseline"
+                              >
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, 'key']}
+                                >
+                                  <Input placeholder="Tên" />
+                                </Form.Item>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, 'value']}
+                                >
+                                  <Input placeholder="Nội dung" />
+                                </Form.Item>
+                                <MinusCircleOutlined onClick={() => remove(name)} />
+                              </Space>
+                            ))}
+                            <Form.Item>
+                              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} style={{width: '20%'}}></Button>
+                            </Form.Item>
+                          </>
+                        )}
+                      </Form.List>
+                    </Form.Item>
+
+                    <Form.Item label="Màu chủ đạo" name='color'>
+                      <Input className='form-input' type='color' />
+                    </Form.Item>
+
+                    <div className='form-checkbox'>
+                      <Form.Item label="Hiển thị mã ghế" valuePropName="checked" name='showSeatId'>
+                        <Checkbox />
+                      </Form.Item>
+                      <Form.Item label="Sử dụng iframe" valuePropName="checked" >
+                        <Checkbox />
+                      </Form.Item>
+                      <Form.Item label="Sử dụng đa ngôn ngữ" valuePropName="checked" >
+                        <Checkbox />
+                      </Form.Item>
+                      <Form.Item label="Ẩn box đặt vé web, app khách hàng" valuePropName="checked" >
+                        <Checkbox />
+                      </Form.Item>
+                      <Form.Item label="Hiển thị ảnh tuyến trên app khách hàng" valuePropName="checked" >
+                        <Checkbox />
+                      </Form.Item>
+                    </div>
+
                   </div>
-                )
-              })
-            }
-          </Form.Item>
 
-          <Form.Item label="Màu chủ đạo" initialValue="">
-            <ColorPicker value={data.color} onChange={(e) => handleChange(e, 'color')}/>
-          </Form.Item>
+                  <div className='inner-form'>
+                    <Form.Item label="Meta Title" name='meta_title'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                    <Form.Item label="Meta Keyword" name='meta_keyword'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                    <Form.Item label="Meta Description" name='meta_description'>
+                      <Input className='form-input' />
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className='form-submit-buttons'>
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit" className='form-button'>
+                      Lưu
+                    </Button>
+                  </Form.Item>
+                  <Form.Item>
+                    <Button type="primary" className='form-button' onClick={() => refreshPage()}>
+                      Huỷ
+                    </Button>
+                  </Form.Item>
+                </div>
+              </Form>
+            </div>
+          )
+      }
+    </>
 
-          <div className='form-checkbox'>
-            <Form.Item label="Hiển thị mã ghế" valuePropName="checked" >
-              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
-            </Form.Item>
-            <Form.Item label="Sử dụng iframe" valuePropName="checked" >
-              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
-            </Form.Item>
-            <Form.Item label="Sử dụng đa ngôn ngữ" valuePropName="checked" >
-              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
-            </Form.Item>
-            <Form.Item label="Ẩn box đặt vé web, app khách hàng" valuePropName="checked" >
-              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
-            </Form.Item>
-            <Form.Item label="Hiển thị ảnh tuyến trên app khách hàng" valuePropName="checked" >
-              <Checkbox checked={data.showSeatId === 1} onChange={(e) => handleChange(e, 'showSeatId')} />
-            </Form.Item>
-          </div>
-
-        </div>
-
-        <div className='inner-form'>
-          <Form.Item label="Meta Title" initialValue="">
-            <Input className='form-input' value={data.meta_title} onChange={(e) => handleChange(e, 'meta_title')} />
-          </Form.Item>
-          <Form.Item label="Meta Keyword" initialValue="">
-            <Input className='form-input' value={data.meta_keyword} onChange={(e) => handleChange(e, 'meta_keyword')} />
-          </Form.Item>
-          <Form.Item label="Meta Description" initialValue="">
-            <Input className='form-input' value={data.meta_description} onChange={(e) => handleChange(e, 'meta_description')} />
-          </Form.Item>
-        </div>
-      </div>
-      <div className='form-submit-buttons'>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className='form-button'>
-            Lưu
-          </Button>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" className='form-button' onClick={() => refreshPage()}>
-            Huỷ
-          </Button>
-        </Form.Item>
-      </div>
-    </Form>
   )
 }
 
-export default Home
+export default Home 

@@ -13,7 +13,7 @@ function App() {
     <Router>
       <div className="App">
         <Nav menuCollapsed={menuCollapsed} />
-        <div className={`page-container`}>
+        <div className={`page-container ${menuCollapsed ? 'collapsed' : ''}`}>
           <MyHeader menuCollapsed={menuCollapsed} setMenuCollapsed={setMenuCollapsed} />
           <div className='page'>
             <Routes>
