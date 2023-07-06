@@ -2,34 +2,92 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { publicRoutes } from './routes';
 import Nav from './components/Navbar';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import MyHeader from './components/Header';
-import Footer from './components/Footer';
+import MyFooter from './components/Footer';
+import { Layout, theme, Menu } from 'antd';
+
+const { Header, Footer, Sider, Content } = Layout;
 
 function App() {
   const [menuCollapsed, setMenuCollapsed] = useState(false);
 
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+
   return (
-    <Router>
-      <div className="App">
-        <Nav menuCollapsed={menuCollapsed} />
-        <div className={`page-container ${menuCollapsed ? 'collapsed' : ''}`}>
+    <Layout style={{ minHeight: '100vh' }} hasSider>
+      <Sider
+        breakpoint="lg"
+        onBreakpoint={(broken) => {
+          console.log(broken);
+        }}
+        onCollapse={(collapsed, type) => {
+          console.log(collapsed, type);
+        }}
+        trigger={null} collapsible collapsed={menuCollapsed}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      >
+        <Nav />
+      </Sider>
+      <Layout
+        style={menuCollapsed ? {marginLeft: 80, transition: 'all 0.3s'} : {marginLeft: 200, transition: 'all 0.2s'}}
+      >
+        <Header
+          style={{
+            padding: 0,
+            background: colorBgContainer,
+            zIndex: 1,
+            position: 'sticky'
+          }}
+        >
           <MyHeader menuCollapsed={menuCollapsed} setMenuCollapsed={setMenuCollapsed} />
-          <div className='page'>
-            <Routes>
-              {
-                publicRoutes.map((item, index) => {
-                  const Page = item.component;
-                  return <Route key={index} path={item.path} element={<Page />} />
-                })
-              }
-            </Routes>
+        </Header>
+
+        <Content
+          style={{
+            margin: '24px 16px 0',
+          }}
+        >
+          <div
+            style={{
+              padding: 24,
+              minHeight: 360,
+              background: colorBgContainer,
+            }}
+          >
+            <Router>
+              <Routes>
+                {
+                  publicRoutes.map((item, index) => {
+                    const Page = item.component;
+                    return <Route key={index} path={item.path} element={<Page />} />
+                  })
+                }
+              </Routes>
+            </Router>
           </div>
-          <Footer />
-        </div>
-      </div>
-    </Router>
+        </Content>
+
+        <Footer
+          style={{
+            textAlign: 'center',
+          }}
+        >
+          Ant Design ©2023 Created by Ant UED
+        </Footer>
+
+      </Layout>
+    </Layout>
   );
-}
+};
 
 export default App;

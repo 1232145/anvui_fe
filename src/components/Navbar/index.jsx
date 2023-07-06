@@ -29,21 +29,16 @@ const items = [
     ]),
 ];
 
-const Nav = ({ menuCollapsed }) => {
+const Nav = () => {
 
     return (
-        <div
-            className='side-bar'
-        >
-            <Menu
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
-                mode="inline"
-                theme="white    "
-                inlineCollapsed={menuCollapsed}
-                items={items}
-            />
-        </div>
+        <Menu
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}
+            mode="inline"
+            theme="dark"
+            items={items}
+        />
     );
 };
 
