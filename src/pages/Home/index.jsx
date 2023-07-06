@@ -3,6 +3,7 @@ import axios from 'axios';
 import './home.css';
 import { Form, Input, Button, Checkbox, Space, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import Loading from '../../components/Loading';
 
 const { Option } = Select;
 const { Item } = Form;
@@ -106,7 +107,7 @@ function Home() {
       {
         loading ?
           (
-            <div>Loading</div>
+            <Loading />
           )
           :
           (
