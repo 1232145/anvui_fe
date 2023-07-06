@@ -5,7 +5,7 @@ import Nav from './components/Navbar';
 import React, { useState } from 'react';
 import MyHeader from './components/Header';
 import MyFooter from './components/Footer';
-import { Layout, theme, Menu } from 'antd';
+import { Layout, theme } from 'antd';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -54,7 +54,7 @@ function App() {
 
         <Content
           style={{
-            margin: '24px 16px 0',
+            margin: '48px 48px 0',
           }}
         >
           <div
@@ -82,7 +82,7 @@ function App() {
             textAlign: 'center',
           }}
         >
-          Ant Design ©2023 Created by Ant UED
+          <MyFooter />
         </Footer>
 
       </Layout>

@@ -5,15 +5,20 @@ import { Form, Input, Button, Checkbox, Space, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
+const { Item } = Form;
 
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
     sm: { span: 8 },
+    md: { span: 8 },
+    lg: { span: 8 },
   },
   wrapperCol: {
     xs: { span: 24 },
     sm: { span: 16 },
+    md: { span: 12 },
+    lg: { span: 12 },
   },
 };
 
@@ -27,12 +32,16 @@ const tailFormItemLayout = {
       span: 16,
       offset: 8,
     },
+    md: { span: 12, offset: 8 },
+    lg: { span: 12, offset: 8 },
   },
 };
 
 const socialOptions = [
   "Facebook", "Youtube"
 ]
+
+const appOptions = ["CHPlay (Google Play)", "AppStore"]
 
 function Home() {
   //socials is set up first for JSON.parse because the fetched socials is not considered array by Form.List
@@ -57,6 +66,19 @@ function Home() {
   //process data
   const processData = (data) => {
     data.address = JSON.parse(data.address);
+
+    //handle app data
+    data.apps = JSON.parse(data.apps).map(item => {
+      if (item.key === 'chplay') {
+        return { ...item, key: appOptions[0] }
+      }
+      else if (item.key === 'appstore') {
+        return { ...item, key: appOptions[1] }
+      }
+      else {
+        return item;
+      }
+    });
 
     //convert all first letter to uppercase: facebook -> Facebook
     data.socials = JSON.parse(data.socials).map(item => {
@@ -95,34 +117,34 @@ function Home() {
               onFinish={onFinish}
               style={{ maxWidth: '70%' }}
             >
-              <Form.Item label="Tên công ty" name='business'>
+              <Item label="Tên công ty" name='business'>
                 <Input />
-              </Form.Item>
+              </Item>
 
-              <Form.Item label="Giấy chứng nhận DKKD" name='dkkd'>
+              <Item label="Giấy chứng nhận DKKD" name='dkkd'>
                 <Input />
-              </Form.Item>
-              <Form.Item label="Đường dẫn DK BCT" name='bct_link'>
+              </Item>
+              <Item label="Đường dẫn DK BCT" name='bct_link'>
                 <Input />
-              </Form.Item>
-              <Form.Item label="Giới thiệu chung" name='short_intro'>
+              </Item>
+              <Item label="Giới thiệu chung" name='short_intro'>
                 <Input.TextArea rows={4} />
-              </Form.Item>
+              </Item>
 
-              <Form.Item label="Số điện thoại" name='phone'>
+              <Item label="Số điện thoại" name='phone'>
                 <Input />
-              </Form.Item>
-              <Form.Item label="Hotline" name='hotline'>
+              </Item>
+              <Item label="Hotline" name='hotline'>
                 <Input />
-              </Form.Item>
-              <Form.Item label="Email" name='email'>
+              </Item>
+              <Item label="Email" name='email'>
                 <Input />
-              </Form.Item>
-              <Form.Item label="Map" name='map'>
+              </Item>
+              <Item label="Map" name='map'>
                 <Input.TextArea rows={5} />
-              </Form.Item>
+              </Item>
 
-              <Form.Item label='Địa chỉ'>
+              <Item label='Địa chỉ'>
                 <Form.List name="address">
                   {(fields, { add, remove }) => (
                     <>
@@ -135,30 +157,30 @@ function Home() {
                           }}
                           align="baseline"
                         >
-                          <Form.Item
+                          <Item
                             {...restField}
                             name={[name, 'key']}
                           >
                             <Input placeholder="Tên" />
-                          </Form.Item>
-                          <Form.Item
+                          </Item>
+                          <Item
                             {...restField}
                             name={[name, 'value']}
                           >
                             <Input placeholder="Nội dung" />
-                          </Form.Item>
+                          </Item>
                           <MinusCircleOutlined onClick={() => remove(name)} />
                         </Space>
                       ))}
-                      <Form.Item>
+                      <Item>
                         <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} style={{ width: '20%' }}></Button>
-                      </Form.Item>
+                      </Item>
                     </>
                   )}
                 </Form.List>
-              </Form.Item>
+              </Item>
 
-              <Form.Item label='Mạng xã hội'>
+              <Item label='Mạng xã hội'>
                 <Form.List name="socials">
                   {(fields, { add, remove }) => (
                     <>
@@ -171,7 +193,7 @@ function Home() {
                           }}
                           align="baseline"
                         >
-                          <Form.Item
+                          <Item
                             {...restField}
                             name={[name, 'key']}
                           >
@@ -180,60 +202,100 @@ function Home() {
                                 socialOptions.map((item, index) => <Option key={index} value={item}>{item}</Option>)
                               }
                             </Select>
-                          </Form.Item>
-                          <Form.Item
+                          </Item>
+                          <Item
                             {...restField}
                             name={[name, 'value']}
                           >
                             <Input placeholder="Link" />
-                          </Form.Item>
+                          </Item>
                           <MinusCircleOutlined onClick={() => remove(name)} />
                         </Space>
                       ))}
-                      <Form.Item>
+                      <Item>
                         <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} style={{ width: '20%' }}></Button>
-                      </Form.Item>
+                      </Item>
                     </>
                   )}
                 </Form.List>
-              </Form.Item>
+              </Item>
 
-              <Form.Item label="Màu chủ đạo" name='color'>
+              <Item label="Màu chủ đạo" name='color'>
                 <Input className='form-input' type='color' />
-              </Form.Item>
+              </Item>
 
-              <Form.Item label="Hiển thị mã ghế" valuePropName="checked" name='showSeatId'>
+              <Item label="Hiển thị mã ghế" valuePropName="checked" name='showSeatId'>
                 <Checkbox />
-              </Form.Item>
-              <Form.Item label="Sử dụng iframe" valuePropName="checked" >
+              </Item>
+              <Item label="Sử dụng iframe" valuePropName="checked" >
                 <Checkbox />
-              </Form.Item>
-              <Form.Item label="Sử dụng đa ngôn ngữ" valuePropName="checked" >
+              </Item>
+              <Item label="Sử dụng đa ngôn ngữ" valuePropName="checked" >
                 <Checkbox />
-              </Form.Item>
-              <Form.Item label="Ẩn box đặt vé web, app khách hàng" valuePropName="checked" >
+              </Item>
+              <Item label="Ẩn box đặt vé web, app khách hàng" valuePropName="checked">
                 <Checkbox />
-              </Form.Item>
-              <Form.Item label="Hiển thị ảnh tuyến trên app khách hàng" valuePropName="checked" >
+              </Item>
+              <Item label="Hiển thị ảnh tuyến trên app khách hàng" valuePropName="checked">
                 <Checkbox />
-              </Form.Item>
+              </Item>
+
+              <Item label='App'>
+                <Form.List name="apps">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Space
+                          key={key}
+                          style={{
+                            display: 'flex',
+                            marginBottom: 8,
+                          }}
+                          align="baseline"
+                        >
+                          <Item
+                            {...restField}
+                            name={[name, 'key']}
+                          >
+                            <Select placeholder='Chọn mạng xã hội'>
+                              {
+                                appOptions.map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                              }
+                            </Select>
+                          </Item>
+                          <Item
+                            {...restField}
+                            name={[name, 'value']}
+                          >
+                            <Input placeholder="Link app" />
+                          </Item>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Space>
+                      ))}
+                      <Item>
+                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} style={{ width: '20%' }}></Button>
+                      </Item>
+                    </>
+                  )}
+                </Form.List>
+              </Item>
 
 
-              <Form.Item label="Meta Title" name='meta_title'>
+              <Item label="Meta Title" name='meta_title'>
                 <Input className='form-input' />
-              </Form.Item>
-              <Form.Item label="Meta Keyword" name='meta_keyword'>
+              </Item>
+              <Item label="Meta Keyword" name='meta_keyword'>
                 <Input className='form-input' />
-              </Form.Item>
-              <Form.Item label="Meta Description" name='meta_description'>
+              </Item>
+              <Item label="Meta Description" name='meta_description'>
                 <Input className='form-input' />
-              </Form.Item>
+              </Item>
 
-              <Form.Item {...tailFormItemLayout}>
+              <Item {...tailFormItemLayout}>
                 <Button type="primary" htmlType="submit">
                   Register
                 </Button>
-              </Form.Item>
+              </Item>
             </Form>
           )
       }
