@@ -175,7 +175,7 @@ function Home() {
                             {...restField}
                             name={[name, 'key']}
                           >
-                            <Select>
+                            <Select placeholder='Chọn mạng xã hội'>
                               {
                                 socialOptions.map((item, index) => <Option key={index} value={item}>{item}</Option>)
                               }
