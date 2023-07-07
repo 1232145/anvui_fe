@@ -6,3 +6,11 @@
 .ant-form-horizontal .ant-form-item-control {
     margin-left: 1% !important;
 }
+
+:where(.css-dev-only-do-not-override-12upa3x).ant-select.ant-select-in-form-item {
+    width: fit-content !important;
+}
+
+:where(.css-dev-only-do-not-override-12upa3x).ant-select .ant-select-selection-item {
+    white-space: normal !important;
+}

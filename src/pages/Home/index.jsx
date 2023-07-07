@@ -55,7 +55,7 @@ function Home() {
       setLoading(true);
       const res = await axios.get(url);
       console.log(res);
-      setData(processData(res.data));
+      setData(processData(res.data, "parse"));
     }
     catch (err) {
       console.log(err);
@@ -66,14 +66,17 @@ function Home() {
   }
 
   //process data
-  const processData = (data) => {
-    data.address = JSON.parse(data.address);
-
-    //handle app data
-    data.apps = JSON.parse(data.apps);
-
-    //handle socials data
-    data.socials = JSON.parse(data.socials);
+  const processData = (data, type) => {
+    if (type === "parse") {
+      data.address = JSON.parse(data.address);
+      data.apps = JSON.parse(data.apps);
+      data.socials = JSON.parse(data.socials);
+    }
+    else if (type === "stringify") {
+      data.address = JSON.stringify(data.address);
+      data.apps = JSON.stringify(data.apps);
+      data.socials = JSON.stringify(data.socials);
+    }
 
     return data;
   }
@@ -83,13 +86,7 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
-    console.log(values);
-
-    values.address = JSON.stringify(values.address);
-    values.socials = JSON.stringify(values.socials);
-    values.apps = JSON.stringify(values.apps);
-
-    await axios.put(url, values)
+    await axios.put(url, processData(values, "stringify"))
       .then(res => {
         console.log(res.data);
         refreshPage();
@@ -208,7 +205,7 @@ function Home() {
                             {...restField}
                             name={[name, 'value']}
                           >
-                            <Input placeholder="Link" />
+                            <Input placeholder="Link"/>
                           </Item>
                           <MinusCircleOutlined onClick={() => remove(name)} />
                         </Space>
