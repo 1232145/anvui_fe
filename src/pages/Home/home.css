@@ -1,0 +1,8 @@
+.ant-form-item .ant-form-item-label >label {
+    display: inline-block !important;
+    white-space: initial;
+}
+
+.ant-form-horizontal .ant-form-item-control {
+    margin-left: 1% !important;
+}

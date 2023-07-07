@@ -39,13 +39,13 @@ const tailFormItemLayout = {
 };
 
 const socialOptions = [
-  "Facebook", "Youtube"
-]
+  { key: "facebook", value: "Facebook" }, { key: "youtube", value: "Youtube" }
+];
 
-const appOptions = ["CHPlay (Google Play)", "AppStore"]
+const appOptions = [{ key: "chplay", value: "CHPlay (Google Play)" }, { key: "appstore", value: "AppStore" }];
+const url = 'http://localhost:5000/home/1877';
 
 function Home() {
-  //socials is set up first for JSON.parse because the fetched socials is not considered array by Form.List
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -53,7 +53,8 @@ function Home() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/home/1877');
+      const res = await axios.get(url);
+      console.log(res);
       setData(processData(res.data));
     }
     catch (err) {
@@ -69,23 +70,11 @@ function Home() {
     data.address = JSON.parse(data.address);
 
     //handle app data
-    data.apps = JSON.parse(data.apps).map(item => {
-      if (item.key === 'chplay') {
-        return { ...item, key: appOptions[0] }
-      }
-      else if (item.key === 'appstore') {
-        return { ...item, key: appOptions[1] }
-      }
-      else {
-        return item;
-      }
-    });
+    data.apps = JSON.parse(data.apps);
 
-    //convert all first letter to uppercase: facebook -> Facebook
-    data.socials = JSON.parse(data.socials).map(item => {
-      const capitalizedKey = item.key.charAt(0).toUpperCase() + item.key.slice(1);
-      return { ...item, key: capitalizedKey };
-    });
+    //handle socials data
+    data.socials = JSON.parse(data.socials);
+
     return data;
   }
 
@@ -93,8 +82,19 @@ function Home() {
     fetchData();
   }, [])
 
-  const onFinish = (values) => {
-    console.log('Form values:', values);
+  const onFinish = async (values) => {
+    console.log(values);
+
+    values.address = JSON.stringify(values.address);
+    values.socials = JSON.stringify(values.socials);
+    values.apps = JSON.stringify(values.apps);
+
+    await axios.put(url, values)
+      .then(res => {
+        console.log(res.data);
+        refreshPage();
+      })
+      .catch(err => console.log(err));
   };
 
   const refreshPage = () => {
@@ -116,7 +116,7 @@ function Home() {
               form={form}
               initialValues={data} name='dynamic_form_nest_item'
               onFinish={onFinish}
-              style={{ maxWidth: '70%' }}
+              style={{ maxWidth: '85%' }}
             >
               <Item label="Tên công ty" name='business'>
                 <Input />
@@ -200,7 +200,7 @@ function Home() {
                           >
                             <Select placeholder='Chọn mạng xã hội'>
                               {
-                                socialOptions.map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                                socialOptions.map((item, index) => <Option key={index} value={item.key}>{item.value}</Option>)
                               }
                             </Select>
                           </Item>
@@ -237,7 +237,8 @@ function Home() {
               <Item label="Ẩn box đặt vé web, app khách hàng" valuePropName="checked">
                 <Checkbox />
               </Item>
-              <Item label="Hiển thị ảnh tuyến trên app khách hàng" valuePropName="checked">
+
+              <Item label="Hiển thị hình ảnh tuyến trên app khách hàng" valuePropName="checked">
                 <Checkbox />
               </Item>
 
@@ -260,7 +261,7 @@ function Home() {
                           >
                             <Select placeholder='Chọn mạng xã hội'>
                               {
-                                appOptions.map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                                appOptions.map((item, index) => <Option key={index} value={item.key}>{item.value}</Option>)
                               }
                             </Select>
                           </Item>
@@ -293,8 +294,11 @@ function Home() {
               </Item>
 
               <Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit">
-                  Register
+                <Button type="primary" htmlType="submit" style={{ marginRight: 10 }}>
+                  Lưu
+                </Button>
+                <Button type="primary" onClick={() => refreshPage()}>
+                  Huỷ
                 </Button>
               </Item>
             </Form>
