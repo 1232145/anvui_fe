@@ -37,7 +37,7 @@ function App() {
             bottom: 0,
           }}
         >
-          <Nav />
+          <Nav menuCollapsed={menuCollapsed}/>
         </Sider>
         <Layout
           style={menuCollapsed ? { marginLeft: 80, transition: 'all 0.3s' } : { marginLeft: 200, transition: 'all 0.2s' }}

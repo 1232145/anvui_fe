@@ -1,9 +1,7 @@
 import React from 'react';
-import { AppstoreOutlined, MailOutlined, PieChartOutlined, DesktopOutlined, ContainerOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
+import { Menu, Avatar } from 'antd';
 import { navRoutes } from '../../routes';
 import { useNavigate } from 'react-router-dom';
-import './nav.css';
 
 //key == path
 const getItem = (label, key, icon, children) => {
@@ -16,18 +14,31 @@ const items = navRoutes.map(item => {
     }));
 });
 
-const Nav = () => {
+const logo = "https://anvui.vn/imgs/logo_b.png";
+
+const logoStyle = {
+    margin: 7.5,
+    background: `url(${logo}) center center / cover`,
+    width: 120,
+    height: 50,
+    transition: 'all 0.3s'
+}
+
+const Nav = ({menuCollapsed}) => {
     const navigate = useNavigate();
 
     return (
-        <Menu
-            onClick={({ key }) => navigate(key)}
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
-            mode="inline"
-            theme="dark"
-            items={items}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Avatar style={menuCollapsed ? {...logoStyle, width: 50, height: 30} : logoStyle} shape='square'/>
+            <Menu
+                onClick={({ key }) => navigate(key)}
+                defaultSelectedKeys={['1']}
+                defaultOpenKeys={['sub1']}
+                mode="inline"
+                theme="dark"
+                items={items}
+            />
+        </div>
     );
 };
 

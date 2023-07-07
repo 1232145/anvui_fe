@@ -1,47 +1,57 @@
 import Home from "../pages/Home";
-import { UserOutlined } from '@ant-design/icons';
-import Page from '../pages/Page'
+import { FileOutlined, HomeOutlined, FilePptOutlined, MenuOutlined, LaptopOutlined, SettingOutlined } from '@ant-design/icons';
+import Page from '../pages/Page';
+import CreateNews from '../pages/News/CreateNews';
+import NewsList from '../pages/News/NewsList';
+import NewsCatagory from '../pages/News/NewsCatagory';
+import CreateNewsCatagory from '../pages/News/CreateNewsCatagory';
+import MenuList from '../pages/Menu/MenuList';
+import Slide from '../pages/Template/Slide';
+import CSSCustom from '../pages/Template/CSSCustom';
+import Theme from '../pages/Template/Theme';
+import Payment from '../pages/Setting/Payment';
+import Domain from '../pages/Setting/Domain';
 
 export const publicRoutes = [
-    { path: '/', name: "Trang chủ", icon: <UserOutlined />, component: Home },
-    { path: '/news/create-news', name: "Thêm tin tức", component: null },
-    { path: '/news/news-list', name: "Danh sách tin tức", component: null },
-    { path: '/news/create-news-catagory', name: "Thêm danh mục tin tức", component: null },
-    { path: '/news/news-catagory', name: "Danh mục tin tức", component: null },
-    { path: '/page', name: "Page", icon: null, component: Page },
-    { path: '/menu/menu-list', name: "Danh sách menu", component: null },
-    { path: '/template/slide-banner', name: "Slide ảnh và Banner", component: null },
-    { path: '/template/css-custom', name: "Thay đổi CSS", component: null },
-    { path: '/template/change-theme', name: "Thay đổi Theme", component: null },
-    { path: '/setting/payment', name: "Thông tin thanh toán", component: null },
-    { path: '/setting/domain', name: "Tên miền", component: null },
+    { path: '/', name: "Trang chủ", icon: <HomeOutlined />, component: Home },
+    { path: '/news/create-news', name: "Thêm tin tức", component: CreateNews },
+    { path: '/news/news-list', name: "Danh sách tin tức", component: NewsList },
+    { path: '/news/create-news-catagory', name: "Thêm danh mục tin tức", component: CreateNewsCatagory },
+    { path: '/news/news-catagory', name: "Danh mục tin tức", component: NewsCatagory },
+    { path: '/page', name: "Page", icon: <FilePptOutlined />, component: Page },
+    { path: '/menu/menu-list', name: "Danh sách menu", component: MenuList },
+    { path: '/template/slide-banner', name: "Slide ảnh và Banner", component: Slide },
+    { path: '/template/css-custom', name: "Thay đổi CSS", component: CSSCustom },
+    { path: '/template/change-theme', name: "Thay đổi Theme", component: Theme },
+    { path: '/setting/payment', name: "Thông tin thanh toán", component: Payment },
+    { path: '/setting/domain', name: "Tên miền", component: Domain },
 ]
 
 export const navRoutes = [
-    { path: '/', component: Home, name: "Trang chủ", icon: <UserOutlined /> },
+    { path: '/', component: Home, name: "Trang chủ", icon: <HomeOutlined /> },
     {
-        path: null, name: "Tin Tức", icon: null, children: [
+        path: null, name: "Tin Tức", icon: <FileOutlined />, children: [
             { path: '/news/create-news', name: "Thêm tin tức", component: null },
             { path: '/news/news-list', name: "Danh sách tin tức", component: null },
             { path: '/news/create-news-catagory', name: "Thêm danh mục tin tức", component: null },
             { path: '/news/news-catagory', name: "Danh mục tin tức", component: null },
         ]
     },
-    { path: '/page', component: Page, name: "Page", icon: null },
+    { path: '/page', component: Page, name: "Page", icon: <FilePptOutlined /> },
     {
-        path: 'null', name: "Menu", icon: null, children: [
+        path: 'null', name: "Menu", icon: <MenuOutlined />, children: [
             { path: '/menu/menu-list', name: "Danh sách menu", component: null },
         ]
     },
     {
-        path: null, name: "Giao diện", icon: null, children: [
+        path: null, name: "Giao diện", icon: <LaptopOutlined />, children: [
             { path: '/template/slide-banner', name: "Slide ảnh và Banner", component: null },
             { path: '/template/css-custom', name: "Thay đổi CSS", component: null },
             { path: '/template/change-theme', name: "Thay đổi Theme", component: null },
         ]
     },
     {
-        path: '/setting', name: "Seting", icon: null, children: [
+        path: '/setting', name: "Seting", icon: <SettingOutlined/>, children: [
             { path: '/setting/payment', name: "Thông tin thanh toán", component: null },
             { path: '/setting/domain', name: "Tên miền", component: null },
         ]
