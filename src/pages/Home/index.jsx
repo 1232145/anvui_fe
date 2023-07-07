@@ -42,8 +42,16 @@ const socialOptions = [
   { key: "facebook", value: "Facebook" }, { key: "youtube", value: "Youtube" }
 ];
 
-const appOptions = [{ key: "chplay", value: "CHPlay (Google Play)" }, { key: "appstore", value: "AppStore" }];
+const appOptions = [
+  { key: "chplay", value: "CHPlay (Google Play)" }, { key: "appstore", value: "AppStore" }
+];
+
+const imgOptions = [
+  "icon", "logo_bottom", "img", "default_facebook_img"
+];
+
 const url = 'http://localhost:5000/home/1877';
+const host = 'https://cdn.anvui.vn/';
 
 function Home() {
   const [data, setData] = useState({});
@@ -54,8 +62,7 @@ function Home() {
     try {
       setLoading(true);
       const res = await axios.get(url);
-      console.log(res);
-      setData(processData(res.data, "parse"));
+      setData(processData(res.data, "in"));
     }
     catch (err) {
       console.log(err);
@@ -67,12 +74,14 @@ function Home() {
 
   //process data
   const processData = (data, type) => {
-    if (type === "parse") {
+    if (type === "in") {
       data.address = JSON.parse(data.address);
       data.apps = JSON.parse(data.apps);
       data.socials = JSON.parse(data.socials);
+
+      imgOptions.forEach(item => data[item] = host + data[item]);
     }
-    else if (type === "stringify") {
+    else if (type === "out") {
       data.address = JSON.stringify(data.address);
       data.apps = JSON.stringify(data.apps);
       data.socials = JSON.stringify(data.socials);
@@ -86,7 +95,7 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
-    await axios.put(url, processData(values, "stringify"))
+    await axios.put(url, processData(values, "out"))
       .then(res => {
         console.log(res.data);
         refreshPage();
@@ -205,7 +214,7 @@ function Home() {
                             {...restField}
                             name={[name, 'value']}
                           >
-                            <Input placeholder="Link"/>
+                            <Input placeholder="Link" />
                           </Item>
                           <MinusCircleOutlined onClick={() => remove(name)} />
                         </Space>
