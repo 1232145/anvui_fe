@@ -14,3 +14,14 @@
 :where(.css-dev-only-do-not-override-12upa3x).ant-select .ant-select-selection-item {
     white-space: normal !important;
 }
+
+.form-upload {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.form-upload-label {
+    text-align: center !important;
+}

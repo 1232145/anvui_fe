@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './home.css';
-import { Form, Input, Button, Checkbox, Space, Select } from 'antd';
+import { Form, Input, Button, Checkbox, Space, Select, Row, Col, Upload, message, Image } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 
@@ -84,6 +84,33 @@ function Home() {
     return data;
   }
 
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Adding 1 to month as it is zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}/${month}/${day}`;
+  }
+
+  const handleFileUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG images!');
+      return false;
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must be smaller than 2MB!');
+      return false;
+    }
+
+    const date = formatDate(new Date());
+    const imageName = `upload/web/${date}/${file.name}`;
+    console.log(imageName);
+    // setData({ ...data, [name]: URL.createObjectURL(file) });
+    return false; // Prevent default upload behavior
+  };
+
   useEffect(() => {
     fetchData();
   }, [])
@@ -116,11 +143,65 @@ function Home() {
               form={form}
               initialValues={data} name='dynamic_form_nest_item'
               onFinish={onFinish}
-              style={{ maxWidth: '85%' }}
+              style={{ maxWidth: '85%', fontSize: '16px', fontWeight: 500 }}
             >
               <Item label="Tên công ty" name='business'>
                 <Input />
               </Item>
+
+              <div className="form-upload">
+                <Row gutter={[17, 17]} justify="center" align="center">
+                  <Col span={4} />
+                  <Col span={5}>
+                    <Item name='img'>
+                      <Upload.Dragger
+                        beforeUpload={handleFileUpload}
+                        showUploadList={false}
+                        name='img'
+                      >
+                        <Image src={data.img} preview={false} />
+                      </Upload.Dragger>
+                      <div className='form-upload-label'><label>Logo trên</label></div>
+                    </Item>
+                  </Col>
+                  <Col span={5}>
+                    <Item name='logo_bottom'>
+                      <Upload.Dragger
+                        beforeUpload={handleFileUpload}
+                        showUploadList={false}
+                        name='logo_bottom'
+                      >
+                        <Image src={data.logo_bottom} preview={false} />
+                      </Upload.Dragger>
+                      <div className='form-upload-label'><label>Logo dưới</label></div>
+                    </Item>
+                  </Col>
+                  <Col span={5}>
+                    <Item name='icon'>
+                      <Upload.Dragger
+                        beforeUpload={handleFileUpload}
+                        showUploadList={false}
+                        name='icon'
+                      >
+                        <Image src={data.icon} preview={false} />
+                      </Upload.Dragger>
+                      <div className='form-upload-label'><label>favicon</label></div>
+                    </Item>
+                  </Col>
+                  <Col span={5}>
+                    <Item name='default_facebook_img'>
+                      <Upload.Dragger
+                        beforeUpload={handleFileUpload}
+                        showUploadList={false}
+                        name='default_facebook_img'
+                      >
+                        <Image src={data.default_facebook_img} preview={false} />
+                      </Upload.Dragger>
+                      <div className='form-upload-label'><label>Facebook share mặc định</label></div>
+                    </Item>
+                  </Col>
+                </Row>
+              </div>
 
               <Item label="Giấy chứng nhận DKKD" name='dkkd'>
                 <Input />
@@ -293,7 +374,7 @@ function Home() {
                 <Input className='form-input' />
               </Item>
 
-              <Item {...tailFormItemLayout} style={{marginLeft: '50%'}}>
+              <Item {...tailFormItemLayout} style={{ marginLeft: '50%' }}>
                 <Button type="primary" htmlType="submit" style={{ marginRight: 5, marginBottom: 5 }}>
                   Lưu
                 </Button>
