@@ -25,14 +25,8 @@ const formItemLayout = {
 
 const tailFormItemLayout = {
   wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
+    xs: { span: 24, offset: 0 },
+    sm: { span: 16, offset: 8 },
     md: { span: 12, offset: 8 },
     lg: { span: 12, offset: 8 },
   },
@@ -299,8 +293,8 @@ function Home() {
                 <Input className='form-input' />
               </Item>
 
-              <Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit" style={{ marginRight: 10 }}>
+              <Item {...tailFormItemLayout} style={{marginLeft: '50%'}}>
+                <Button type="primary" htmlType="submit" style={{ marginRight: 5, marginBottom: 5 }}>
                   Lưu
                 </Button>
                 <Button type="primary" onClick={() => refreshPage()}>
