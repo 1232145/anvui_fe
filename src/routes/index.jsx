@@ -51,7 +51,7 @@ export const navRoutes = [
         ]
     },
     {
-        path: '/setting', name: "Seting", icon: <SettingOutlined/>, children: [
+        path: '/setting', name: "Setting", icon: <SettingOutlined/>, children: [
             { path: '/setting/payment', name: "Thông tin thanh toán", component: null },
             { path: '/setting/domain', name: "Tên miền", component: null },
         ]
