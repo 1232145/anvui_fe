@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './home.css';
-import { Form, Input, Button, Checkbox, Space, Select, Row, Col, Upload, message, Image } from 'antd';
+import { Form, Input, Button, Checkbox, Space, Select, Row, Col, Upload, message, Image, Collapse } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 
@@ -20,15 +20,6 @@ const formItemLayout = {
     sm: { span: 16 },
     md: { span: 12 },
     lg: { span: 12 },
-  },
-};
-
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: { span: 24, offset: 0 },
-    sm: { span: 16, offset: 8 },
-    md: { span: 12, offset: 8 },
-    lg: { span: 12, offset: 8 },
   },
 };
 
@@ -365,18 +356,29 @@ function Home() {
                 </Form.List>
               </Item>
 
+              <Collapse
+                accordion
+                expandIcon={({ isActive }) => (
+                  <p rotate={isActive ? 90 : 0} />
+                )}
+                style={{ marginLeft: '10%', marginBottom: '5%', width: '100%' }}
+              >
+                <Collapse.Panel header="SEO" key="1">
+                  <Item label="Meta Title" name='meta_title'>
+                    <Input className='form-input' />
+                  </Item>
+                  <Item label="Meta Keyword" name='meta_keyword'>
+                    <Input className='form-input' />
+                  </Item>
+                  <Item label="Meta Description" name='meta_description'>
+                    <Input className='form-input' />
+                  </Item>
+                </Collapse.Panel>
 
-              <Item label="Meta Title" name='meta_title'>
-                <Input className='form-input' />
-              </Item>
-              <Item label="Meta Keyword" name='meta_keyword'>
-                <Input className='form-input' />
-              </Item>
-              <Item label="Meta Description" name='meta_description'>
-                <Input className='form-input' />
-              </Item>
+              </Collapse>
 
-              <Item {...tailFormItemLayout} style={{ marginLeft: '50%' }}>
+
+              <Item style={{ marginLeft: '50%' }}>
                 <Button type="primary" htmlType="submit" style={{ marginRight: 5, marginBottom: 5 }}>
                   Lưu
                 </Button>
