@@ -311,10 +311,10 @@ function Home() {
               <Item label="Hiển thị mã ghế" valuePropName="checked" name='showSeatId'>
                 <Checkbox />
               </Item>
-              <Item label="Sử dụng iframe" valuePropName="checked" >
+              <Item label="Sử dụng iframe" valuePropName="checked" name='use_frame'>
                 <Checkbox />
               </Item>
-              <Item label="Sử dụng đa ngôn ngữ" valuePropName="checked" >
+              <Item label="Sử dụng đa ngôn ngữ" valuePropName="checked" name='use_multi_lang'>
                 <Checkbox />
               </Item>
               <Item label="Ẩn box đặt vé web, app khách hàng" valuePropName="checked">
