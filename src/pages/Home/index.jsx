@@ -79,6 +79,8 @@ function Home() {
       data.address = JSON.stringify(data.address);
       data.apps = JSON.stringify(data.apps);
       data.socials = JSON.stringify(data.socials);
+
+      imgOptions.forEach(item => data[item] = data[item].replace(host, ""))
     }
 
     return data;
