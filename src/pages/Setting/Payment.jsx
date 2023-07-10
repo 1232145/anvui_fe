@@ -45,11 +45,9 @@ function Payment() {
   }, [])
 
   const onFinish = (values) => {
-    console.log(values);
-
     const params = {payment_info: "", payments_method: "", paymentNote: ""};
 
-    params.payment_info = JSON.stringify(values.arrayCK);
+    params.payment_info = JSON.stringify({ck: values.arrayCK});
     delete values.arrayCK;
 
     let array = [];
@@ -60,13 +58,23 @@ function Payment() {
     })
 
     params.payments_method = JSON.stringify(array);
+    //temporary:
+    params.paymentNote = data.paymentNote;
 
-    console.log(params);
+    axios.put(url, params).then(res => {
+      console.log(res.data)
+      refreshPage();
+    })
+      .catch(err => console.log(err))
   }
 
   const refreshPage = () => {
-    // window.location.reload();
-    form.resetFields()
+    window.location.reload();
+    window.scrollTo(0, 0);
+  }
+  
+  const cancel = () => {
+    form.resetFields();
     window.scrollTo(0, 0);
   }
 
@@ -163,11 +171,11 @@ function Payment() {
                 }
               </Item>
 
-              <Item style={{ marginLeft: '53.5%' }}>
+              <Item style={{ marginLeft: '45.5%' }}>
                 <Button type="primary" htmlType="submit" style={{ marginRight: 5, marginBottom: 5 }}>
                   Lưu
                 </Button>
-                <Button type="primary" onClick={() => refreshPage()}>
+                <Button type="primary" onClick={() => cancel()}>
                   Huỷ
                 </Button>
               </Item>

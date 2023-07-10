@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu, Avatar } from 'antd';
 import { navRoutes } from '../../routes';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 
 //key == path
 const getItem = (label, key, icon, children) => {
@@ -26,13 +26,14 @@ const logoStyle = {
 
 const Nav = ({ menuCollapsed }) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Avatar style={menuCollapsed ? { ...logoStyle, width: 50, height: 30 } : logoStyle} shape='square' />
             <Menu
                 onClick={({ key }) => navigate(key)}
-                defaultSelectedKeys={['/']}
+                defaultSelectedKeys={[location.pathname]}
                 defaultOpenKeys={['sub1']}
                 mode="inline"
                 theme="dark"

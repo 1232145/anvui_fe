@@ -118,8 +118,12 @@ function Home() {
   };
 
   const refreshPage = () => {
-    // window.location.reload();
-    form.resetFields()
+    window.location.reload();
+    window.scrollTo(0, 0);
+  }
+
+  const cancel = () => {
+    form.resetFields();
     window.scrollTo(0, 0);
   }
 
@@ -383,7 +387,7 @@ function Home() {
                 <Button type="primary" htmlType="submit" style={{ marginRight: 5, marginBottom: 5 }}>
                   Lưu
                 </Button>
-                <Button type="primary" onClick={() => refreshPage()}>
+                <Button type="primary" onClick={() => cancel()}>
                   Huỷ
                 </Button>
               </Item>
