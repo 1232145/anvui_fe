@@ -35,7 +35,7 @@ const imgOptions = [
   "icon", "logo_bottom", "img", "default_facebook_img"
 ];
 
-const url = 'http://localhost:5000/home/1877';
+const url = 'http://localhost:5000/1877';
 const host = 'https://cdn.anvui.vn/';
 
 function Home() {
@@ -118,7 +118,8 @@ function Home() {
   };
 
   const refreshPage = () => {
-    window.location.reload();
+    // window.location.reload();
+    form.resetFields()
     window.scrollTo(0, 0);
   }
 
@@ -378,7 +379,7 @@ function Home() {
               </Collapse>
 
 
-              <Item style={{ marginLeft: '50%' }}>
+              <Item style={{ marginLeft: '53.5%' }}>
                 <Button type="primary" htmlType="submit" style={{ marginRight: 5, marginBottom: 5 }}>
                   Lưu
                 </Button>

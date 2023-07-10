@@ -24,19 +24,20 @@ const logoStyle = {
     transition: 'all 0.3s'
 }
 
-const Nav = ({menuCollapsed}) => {
+const Nav = ({ menuCollapsed }) => {
     const navigate = useNavigate();
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Avatar style={menuCollapsed ? {...logoStyle, width: 50, height: 30} : logoStyle} shape='square'/>
+            <Avatar style={menuCollapsed ? { ...logoStyle, width: 50, height: 30 } : logoStyle} shape='square' />
             <Menu
                 onClick={({ key }) => navigate(key)}
-                defaultSelectedKeys={['1']}
+                defaultSelectedKeys={['/']}
                 defaultOpenKeys={['sub1']}
                 mode="inline"
                 theme="dark"
                 items={items}
+                style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}
             />
         </div>
     );
