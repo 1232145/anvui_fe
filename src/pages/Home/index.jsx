@@ -85,7 +85,7 @@ function Home() {
     return `${year}/${month}/${day}`;
   }
 
-  const handleFileUpload = (file) => {
+  const handleFileUpload = (file, type) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG images!');
@@ -99,7 +99,7 @@ function Home() {
 
     const date = formatDate(new Date());
     const imageName = `upload/web/${date}/${file.name}`;
-    console.log(imageName);
+    console.log(imageName, type);
     // setData({ ...data, [name]: URL.createObjectURL(file) });
     return false; // Prevent default upload behavior
   };
@@ -153,9 +153,8 @@ function Home() {
                   <Col span={5}>
                     <Item name='img'>
                       <Upload.Dragger
-                        beforeUpload={handleFileUpload}
+                        beforeUpload={(file) => handleFileUpload(file, 'img')}
                         showUploadList={false}
-                        name='img'
                       >
                         <Image src={data.img} preview={false} />
                       </Upload.Dragger>
@@ -165,7 +164,7 @@ function Home() {
                   <Col span={5}>
                     <Item name='logo_bottom'>
                       <Upload.Dragger
-                        beforeUpload={handleFileUpload}
+                        beforeUpload={(file) => handleFileUpload(file, 'logo_bottom')}
                         showUploadList={false}
                         name='logo_bottom'
                       >
@@ -177,7 +176,7 @@ function Home() {
                   <Col span={5}>
                     <Item name='icon'>
                       <Upload.Dragger
-                        beforeUpload={handleFileUpload}
+                        beforeUpload={(file) => handleFileUpload(file, 'icon')}
                         showUploadList={false}
                         name='icon'
                       >
@@ -189,7 +188,7 @@ function Home() {
                   <Col span={5}>
                     <Item name='default_facebook_img'>
                       <Upload.Dragger
-                        beforeUpload={handleFileUpload}
+                        beforeUpload={(file) => handleFileUpload(file, 'default_facebook_img')}
                         showUploadList={false}
                         name='default_facebook_img'
                       >

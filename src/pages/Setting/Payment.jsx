@@ -4,14 +4,35 @@ import Loading from '../../components/Loading';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import './payment.css';
 import axios from 'axios';
+import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill';
 
 const url = 'http://localhost:5000/setting/payment/1877';
+
+const editorModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ['image', 'video', 'link'],
+    [{ size: ['small', false, 'large', 'huge'] }],
+    [{ background: [] }],
+    [{ color: [] }],
+    [{ font: [] }],
+    ['clean'],
+    ['bold', 'italic', 'underline', 'strike', 'script'],
+    [{ align: [] }],
+    ['list', 'indent'],
+    ['blockquote', 'code-block'],
+    [{ 'indent': '-1' }, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }],
+  ],
+};
 
 function Payment() {
   const { Item } = Form;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
+  const [content, setContent] = useState('');
 
   const processDataIn = (data) => {
     data.payment_info = JSON.parse(data.payment_info);
@@ -45,9 +66,9 @@ function Payment() {
   }, [])
 
   const onFinish = (values) => {
-    const params = {payment_info: "", payments_method: "", paymentNote: ""};
+    const params = { payment_info: "", payments_method: "", paymentNote: "" };
 
-    params.payment_info = JSON.stringify({ck: values.arrayCK});
+    params.payment_info = JSON.stringify({ ck: values.arrayCK });
     delete values.arrayCK;
 
     let array = [];
@@ -72,7 +93,7 @@ function Payment() {
     window.location.reload();
     window.scrollTo(0, 0);
   }
-  
+
   const cancel = () => {
     form.resetFields();
     window.scrollTo(0, 0);
@@ -165,10 +186,11 @@ function Payment() {
               </Item>
 
               <Item label="Lưu ý khi đặt vé ">
-                <Input.TextArea rows={5} />
-                {
-                  <div dangerouslySetInnerHTML={{ __html: data.paymentNote }} />
-                }
+                <ReactQuill
+                  modules={editorModules}
+                  value={content}
+                  onChange={setContent}
+                />
               </Item>
 
               <Item style={{ marginLeft: '45.5%' }}>
