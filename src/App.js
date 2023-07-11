@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { publicRoutes } from './routes';
 import Nav from './components/Navbar';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import MyHeader from './components/Header';
 import MyFooter from './components/Footer';
 import { Layout, theme } from 'antd';
