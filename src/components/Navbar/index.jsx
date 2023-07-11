@@ -2,6 +2,7 @@ import React from 'react';
 import { Menu, Avatar } from 'antd';
 import { navRoutes } from '../../routes';
 import { useNavigate, useLocation  } from 'react-router-dom';
+import logo from '../../img/logo_b.png';
 
 //key == path
 const getItem = (label, key, icon, children) => {
@@ -13,8 +14,6 @@ const items = navRoutes.map(item => {
         return getItem(item.name, item.path);
     }));
 });
-
-const logo = "https://anvui.vn/imgs/logo_b.png";
 
 const logoStyle = {
     margin: 7.5,
