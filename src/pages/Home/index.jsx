@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { api } from '../../components/Api/api';
 import './home.css';
 import { Form, Input, Button, Checkbox, Space, Select, Row, Col, Upload, message, Image, Collapse } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 const { Item } = Form;
@@ -42,15 +43,17 @@ function Home() {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(url);
+      const res = await api.get(url);
       setData(processData(res.data, "in"));
     }
     catch (err) {
       console.log(err);
+      navigate('/error')
     }
     finally {
       setLoading(false);
@@ -109,7 +112,7 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
-    await axios.put(url, processData(values, "out"))
+    await api.put(url, processData(values, "out"))
       .then(res => {
         console.log(res.data);
         refreshPage();

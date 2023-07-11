@@ -11,6 +11,8 @@ import CSSCustom from '../pages/Template/CSSCustom';
 import Theme from '../pages/Template/Theme';
 import Payment from '../pages/Setting/Payment';
 import Domain from '../pages/Setting/Domain';
+import NotFoundPage from "../pages/Error/NotFoundPage";
+import ErrorPage from '../pages/Error/ErrorPage';
 
 export const publicRoutes = [
     { path: '/', name: "Trang chủ", icon: <HomeOutlined />, component: Home },
@@ -25,6 +27,8 @@ export const publicRoutes = [
     { path: '/template/change-theme', name: "Thay đổi Theme", component: Theme },
     { path: '/setting/payment', name: "Thông tin thanh toán", component: Payment },
     { path: '/setting/domain', name: "Tên miền", component: Domain },
+    { path: '*', name: "NotFound", component: NotFoundPage},
+    { path: '/error', name: "Error", component: ErrorPage}
 ]
 
 export const navRoutes = [

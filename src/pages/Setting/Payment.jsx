@@ -3,36 +3,47 @@ import React, { useState, useEffect } from 'react';
 import Loading from '../../components/Loading';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import './payment.css';
-import axios from 'axios';
+import { api } from '../../components/Api/api';
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
+import { useNavigate } from 'react-router-dom';
 
 const url = 'http://localhost:5000/setting/payment/1877';
 
 const editorModules = {
   toolbar: [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    ['image', 'video', 'link'],
-    [{ size: ['small', false, 'large', 'huge'] }],
-    [{ background: [] }],
-    [{ color: [] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ color: [] }, { background: [] }],
     [{ font: [] }],
-    ['clean'],
-    ['bold', 'italic', 'underline', 'strike', 'script'],
-    [{ align: [] }],
-    ['list', 'indent'],
     ['blockquote', 'code-block'],
-    [{ 'indent': '-1' }, { 'indent': '+1' }],
-    [{ 'direction': 'rtl' }],
+    [{ align: [] }],
+    [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+    ['link', 'image', 'video'],
+    ['clean'],
   ],
+  clipboard: {
+    matchVisual: false
+  }
 };
+
+const formats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike' ,
+  'color', 'background',
+  'font',
+  'blockquote', 'code-block',
+  'align',
+  'list', 'bullet', 'indent',
+  'link', 'image', 'video'
+];
 
 function Payment() {
   const { Item } = Form;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
-  const [content, setContent] = useState('');
+  const navigate = useNavigate();
 
   const processDataIn = (data) => {
     data.payment_info = JSON.parse(data.payment_info);
@@ -50,11 +61,12 @@ function Payment() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(url);
+      const res = await api.get(url);
       setData(processDataIn(res.data));
     }
     catch (err) {
       console.log(err);
+      navigate('/error');
     }
     finally {
       setLoading(false);
@@ -82,7 +94,7 @@ function Payment() {
     //temporary:
     params.paymentNote = data.paymentNote;
 
-    axios.put(url, params).then(res => {
+   api.put(url, params).then(res => {
       console.log(res.data)
       refreshPage();
     })
@@ -188,8 +200,9 @@ function Payment() {
               <Item label="Lưu ý khi đặt vé ">
                 <ReactQuill
                   modules={editorModules}
-                  value={content}
-                  onChange={setContent}
+                  value={data.paymentNote}
+                  onChange={(e) => console.log(e)}
+                  formats={formats}
                 />
               </Item>
 
