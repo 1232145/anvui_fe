@@ -8,7 +8,7 @@ import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { useNavigate } from 'react-router-dom';
 
-const url = 'http://localhost:5000/setting/payment/1877';
+const url = '/setting/payment/1877';
 
 const editorModules = {
   toolbar: [

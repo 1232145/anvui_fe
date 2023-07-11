@@ -36,7 +36,7 @@ const imgOptions = [
   "icon", "logo_bottom", "img", "default_facebook_img"
 ];
 
-const url = 'http://localhost:5000/1877';
+const url = '/1877';
 const host = 'https://cdn.anvui.vn/';
 
 function Home() {

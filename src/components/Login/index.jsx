@@ -5,12 +5,15 @@ import { api } from '../Api/api';
 
 const { Title } = Typography;
 
-const Login = ({setLogin}) => {
+const Login = () => {
   const onFinish = (values) => {
     console.log('Received values:', values);
     // Handle form submission logic here
-    
-    setLogin(true);
+    api.post('/login', values)
+    .then(res => {
+      console.log(res.data);
+    })
+    .catch(err => console.log(err))
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -47,7 +50,7 @@ const Login = ({setLogin}) => {
           onFinishFailed={onFinishFailed}
         >
           <Form.Item
-            name="userName"
+            name="username"
             rules={[
               { required: true, message: 'Please enter your username!' },
             ]}
