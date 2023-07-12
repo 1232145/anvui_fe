@@ -4,14 +4,15 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { api } from '../Api/api';
 
 const { Title } = Typography;
+const url = '/login';
 
-const Login = () => {
-  const onFinish = (values) => {
-    console.log('Received values:', values);
+const Login = ({setLogin}) => {
+  const onFinish = async (values) => {
     // Handle form submission logic here
-    api.post('/login', values)
+    await api.post(url, values)
     .then(res => {
-      console.log(res.data);
+      localStorage.setItem('accessToken', res.data.access_token);
+      setLogin(true);
     })
     .catch(err => console.log(err))
   };
