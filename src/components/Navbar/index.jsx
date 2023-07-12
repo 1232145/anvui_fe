@@ -28,7 +28,7 @@ const Nav = ({ menuCollapsed }) => {
     const location = useLocation();
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'hidden' }}>
             <Avatar style={menuCollapsed ? { ...logoStyle, width: 50, height: 30 } : logoStyle} shape='square' />
             <Menu
                 onClick={({ key }) => navigate(key)}
@@ -37,7 +37,6 @@ const Nav = ({ menuCollapsed }) => {
                 mode="inline"
                 theme="dark"
                 items={items}
-                style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}
             />
         </div>
     );

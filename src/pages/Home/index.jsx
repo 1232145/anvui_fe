@@ -36,7 +36,6 @@ const imgOptions = [
   "icon", "logo_bottom", "img", "default_facebook_img"
 ];
 
-const url = '/1877';
 const host = 'https://cdn.anvui.vn/';
 
 function Home() {
@@ -48,7 +47,7 @@ function Home() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await api.get(url);
+      const res = await api.get();
       setData(processData(res.data, "in"));
     }
     catch (err) {
@@ -112,7 +111,7 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
-    await api.put(url, processData(values, "out"))
+    await api.put(processData(values, "out"))
       .then(res => {
         console.log(res.data);
         refreshPage();
