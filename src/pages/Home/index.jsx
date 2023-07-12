@@ -111,7 +111,7 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
-    await api.put(processData(values, "out"))
+    await api.put('', processData(values, "out"))
       .then(res => {
         console.log(res.data);
         refreshPage();

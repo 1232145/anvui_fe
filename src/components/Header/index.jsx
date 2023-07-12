@@ -1,17 +1,36 @@
 import React from 'react';
-import { Layout, Button } from 'antd';
+import { Layout, Button, Dropdown, Menu } from 'antd';
 import './header.css';
-import { MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Header } = Layout;
 
-const MyHeader = ({menuCollapsed, setMenuCollapsed}) => {
+const MyHeader = ({ menuCollapsed, setMenuCollapsed }) => {
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    window.location.reload();
+  }
+
+  const items = [
+    {
+      label: <a onClick={handleLogout}>Log out</a>,
+      key: '0',
+    }
+  ]
 
   return (
     <div>
       <Header className='header'>
         <div className='nav-button'>
-          <Button type="default" onClick={() => setMenuCollapsed(!menuCollapsed)} icon={<MenuOutlined />}/>
+          <div>
+          <Button type="default" onClick={() => setMenuCollapsed(!menuCollapsed)} icon={<MenuOutlined />} />
+          </div>
+          <div>
+          <Dropdown menu={{ items }} trigger={['click']}>
+            <Button type="default" shape="square" icon={<UserOutlined />}>username</Button>
+          </Dropdown>
+          </div>
         </div>
       </Header>
     </div>

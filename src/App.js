@@ -26,7 +26,7 @@ const App = () => {
           :
           (
             <Router>
-              <Layout style={{ minHeight: '100vh' }} hasSider>
+              <Layout style={{ minHeight: '100vh', width: 'auto' }} hasSider>
                 <Sider
                   breakpoint="lg"
                   onBreakpoint={(broken) => {
@@ -48,14 +48,15 @@ const App = () => {
                   <Nav menuCollapsed={menuCollapsed} />
                 </Sider>
                 <Layout
-                  style={menuCollapsed ? { marginLeft: 80, transition: 'all 0.3s' } : { marginLeft: 200, transition: 'all 0.2s' }}
+                  style={menuCollapsed ? { marginLeft: 80, transition: 'all 0.3s ease' } : { marginLeft: 200, transition: 'all 0.2s ease' }}
                 >
                   <Header
                     style={{
                       padding: 0,
                       background: colorBgContainer,
                       zIndex: 1,
-                      position: 'sticky'
+                      position: 'sticky',
+                      width: '100%'
                     }}
                   >
                     <MyHeader menuCollapsed={menuCollapsed} setMenuCollapsed={setMenuCollapsed} />
