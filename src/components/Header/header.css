@@ -11,7 +11,7 @@
 
 .nav-button {
     /* Problem with width and responsive because of fixed header */
-    width: 90%;
+    /* width: 90%; */
     margin-left: 15px;
     transition: width 0.3s;
     overflow: hidden;

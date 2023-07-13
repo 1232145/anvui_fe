@@ -50,7 +50,10 @@ function Payment() {
     data.payments_method = JSON.parse(data.payments_method);
 
     //destructure the data for easier ant design Form
+
+    //add arrayCk as array of payment info
     data.arrayCK = data.payment_info.ck;
+    //add field as payment method for data
     data.payments_method.forEach(item => {
       data[item] = data[item] ? false : true;
     })
@@ -77,7 +80,7 @@ function Payment() {
     fetchData();
   }, [])
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     const params = { payment_info: "", payments_method: "", paymentNote: "" };
 
     params.payment_info = JSON.stringify({ ck: values.arrayCK });
@@ -94,11 +97,11 @@ function Payment() {
     //temporary:
     params.paymentNote = data.paymentNote;
 
-   api.put(url, params).then(res => {
+   await api.put(url, params).then(res => {
       console.log(res.data)
       refreshPage();
     })
-      .catch(err => console.log(err))
+      .catch(err => navigate('/error'));
   }
 
   const refreshPage = () => {
