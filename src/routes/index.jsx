@@ -13,6 +13,7 @@ import Payment from '../pages/Setting/Payment';
 import Domain from '../pages/Setting/Domain';
 import NotFoundPage from "../pages/Error/NotFoundPage";
 import ErrorPage from '../pages/Error/ErrorPage';
+import CreatePage from "../pages/Page/CreatePage";
 
 export const publicRoutes = [
     { path: '/', name: "Trang chủ", icon: <HomeOutlined />, component: Home },
@@ -21,6 +22,7 @@ export const publicRoutes = [
     { path: '/news/create-news-catagory', name: "Thêm danh mục tin tức", component: CreateNewsCatagory },
     { path: '/news/news-catagory', name: "Danh mục tin tức", component: NewsCatagory },
     { path: '/page', name: "Page", icon: <FilePptOutlined />, component: Page },
+    { path: 'page/create-page', name: "Thêm trang", component: CreatePage},
     { path: '/menu/menu-list', name: "Danh sách menu", component: MenuList },
     { path: '/template/slide-banner', name: "Slide ảnh và Banner", component: Slide },
     { path: '/template/css-custom', name: "Thay đổi CSS", component: CSSCustom },
