@@ -91,7 +91,7 @@ const Page = () => {
             try {
                 setLoading(true);
                 const res = await api.get(location.pathname);
-                const pages = res.data.map((item, index) => ({ ...item, stt: index + 1 }));
+                const pages = res.data.map((item, index) => ({ ...item, stt: index + 1, key: index }));
                 setData(pages);
                 setfilteredData(pages);
             }

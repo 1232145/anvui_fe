@@ -85,12 +85,13 @@ const CreatePage = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
+    const url = location.pathname + `?id=${id}`;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const res = await api.get(location.pathname + `?id=${id}`);
+                const res = await api.get(url);
                 setData(res.data);
                 setInitialData(res.data);
             }
@@ -118,19 +119,22 @@ const CreatePage = () => {
     const handleInput = (e) => {
         const value = e.currentTarget.value;
         const slug = value.toLowerCase()
-        .replace(/\s+/g, '-') // Replace spaces with hyphens
-        .replace(/./g, (char) => specialCharacters[char] || char) + '.html'; // Replace special characters
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/./g, (char) => specialCharacters[char] || char) + '.html'; // Replace special characters
 
         setData({ ...data, title: value, alias: slug });
     }
 
     const cancel = () => {
-        setData(initialData);
-        window.scrollTo(0, 0);
+        navigate('/page');
     }
 
-    const onFinish = () => {
+    const onFinish = async () => {
         console.log(data);
+        await api.post(url, data).then(res => {
+            console.log(res.data);
+            navigate('/page');
+        }).catch(err => navigate('/error'));
     }
 
     return (
