@@ -5,42 +5,15 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import './payment.css';
 import { api } from '../../components/Api/api';
 import 'react-quill/dist/quill.snow.css';
-import ReactQuill from 'react-quill';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-const editorModules = {
-  toolbar: [
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ color: [] }, { background: [] }],
-    [{ font: [] }],
-    ['blockquote', 'code-block'],
-    [{ align: [] }],
-    [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-    ['link', 'image', 'video'],
-    ['clean'],
-  ],
-  clipboard: {
-    matchVisual: false
-  }
-};
-
-const formats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike' ,
-  'color', 'background',
-  'font',
-  'blockquote', 'code-block',
-  'align',
-  'list', 'bullet', 'indent',
-  'link', 'image', 'video'
-];
+import QuillForm from '../../utility/QuillForm';
 
 function Payment() {
   const { Item } = Form;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
+  const [quillData, setQuillData] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -64,7 +37,9 @@ function Payment() {
     try {
       setLoading(true);
       const res = await api.get(location.pathname);
-      setData(processDataIn(res.data));
+      const processedData = processDataIn(res.data);
+      setData(processedData);
+      setQuillData(processedData.paymentNote);
     }
     catch (err) {
       console.log(err);
@@ -93,10 +68,9 @@ function Payment() {
     })
 
     params.payments_method = JSON.stringify(array);
-    //temporary:
-    params.paymentNote = data.paymentNote;
+    params.paymentNote = quillData;
 
-   await api.put(location.pathname, params).then(res => {
+    await api.put(location.pathname, params).then(res => {
       console.log(res.data)
       refreshPage();
     })
@@ -116,6 +90,10 @@ function Payment() {
   const handlePaymentCK = (e) => {
     const value = e.target.checked;
     setData({ ...data, paymentCK: value })
+  }
+
+  const handleQuillChange = (e) => {
+    setQuillData(e);
   }
 
   return (
@@ -200,12 +178,7 @@ function Payment() {
               </Item>
 
               <Item label="Lưu ý khi đặt vé ">
-                <ReactQuill
-                  modules={editorModules}
-                  value={data.paymentNote}
-                  onChange={(e) => console.log(e)}
-                  formats={formats}
-                />
+                <QuillForm data={quillData} handleChange={handleQuillChange} />
               </Item>
 
               <Item style={{ marginLeft: '45.5%' }}>
