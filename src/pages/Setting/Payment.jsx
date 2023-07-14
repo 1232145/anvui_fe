@@ -6,9 +6,7 @@ import './payment.css';
 import { api } from '../../components/Api/api';
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-import { useNavigate } from 'react-router-dom';
-
-const url = '/setting/payment';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const editorModules = {
   toolbar: [
@@ -44,6 +42,7 @@ function Payment() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
 
   const processDataIn = (data) => {
     data.payment_info = JSON.parse(data.payment_info);
@@ -64,7 +63,7 @@ function Payment() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await api.get(url);
+      const res = await api.get(location.pathname);
       setData(processDataIn(res.data));
     }
     catch (err) {
@@ -97,7 +96,7 @@ function Payment() {
     //temporary:
     params.paymentNote = data.paymentNote;
 
-   await api.put(url, params).then(res => {
+   await api.put(location.pathname, params).then(res => {
       console.log(res.data)
       refreshPage();
     })

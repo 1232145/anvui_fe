@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { api } from '../../components/Api/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { Alert, Form, Input, Space, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-
-const url = '/setting/domain';
 
 function Domain() {
   const { Item } = Form;
@@ -13,11 +11,12 @@ function Domain() {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await api.get(url);
+      const res = await api.get(location.pathname);
       const arrayData = processData(res.data.domain, "in");
       setData({ domain: arrayData });
     }
@@ -47,7 +46,7 @@ function Domain() {
 
   const onFinish = async (values) => {
     const out = {domain: processData(values.domain, "out")};
-    await api.put(url, out)
+    await api.put(location, out)
     .then(res => {
       console.log(res.data);
       refreshPage();
