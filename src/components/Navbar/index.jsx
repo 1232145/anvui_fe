@@ -32,8 +32,8 @@ const Nav = ({ menuCollapsed }) => {
             <Avatar style={menuCollapsed ? { ...logoStyle, width: 50, height: 30 } : logoStyle} shape='square' />
             <Menu
                 onClick={({ key }) => navigate(key)}
-                defaultSelectedKeys={[location.pathname]}
-                defaultOpenKeys={['sub1']}
+                defaultSelectedKeys={['/']}
+                selectedKeys={[location.pathname]}
                 mode="inline"
                 theme="dark"
                 items={items}

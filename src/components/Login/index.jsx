@@ -2,17 +2,21 @@ import React from 'react';
 import { Form, Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { api } from '../Api/api';
+import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 const url = '/login';
 
 const Login = ({setLogin}) => {
+  const navigate = useNavigate();
+
   const onFinish = async (values) => {
     // Handle form submission logic here
     await api.post(url, values)
     .then(res => {
       localStorage.setItem('accessToken', res.data.access_token);
       setLogin(true);
+      navigate('/');
     })
     .catch(err => console.log(err))
   };

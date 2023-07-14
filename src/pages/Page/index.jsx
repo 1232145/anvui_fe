@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../components/Api/api";
 import Loading from "../../components/Loading";
-import { Table, Pagination, Input, Select, Row, Col, Button } from 'antd';
+import { Table, Input, Select, Row, Col, Button } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 
 const url = '/page';
