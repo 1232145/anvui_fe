@@ -37,9 +37,13 @@ const Page = () => {
                     navigate(location.pathname + `/create-page?id=${item.id}`);
                 }
 
-                const handleDeleteEntry = (item) => {
-                    const { id } = item;
-
+                const handleDeleteEntry = async (item) => {
+                    const query = `?id=${item.id}`;
+                    await api.delete(location.pathname + query).then(res => {
+                        console.log(res.data);
+                        refreshPage();
+                    })
+                        .catch(err => navigate('/error'));
                 }
 
                 return (
@@ -85,6 +89,11 @@ const Page = () => {
     const handleAddEntry = () => {
         navigate(location.pathname + '/create-page');
     };
+
+    const refreshPage = () => {
+        window.location.reload();
+        window.scrollTo(0, 0);
+    }
 
     useEffect(() => {
         const fetchData = async () => {

@@ -81,7 +81,6 @@ const CreatePage = () => {
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     const id = queryParams.get('id');
-    const [initialData, setInitialData] = useState(null);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
@@ -93,7 +92,6 @@ const CreatePage = () => {
                 setLoading(true);
                 const res = await api.get(url);
                 setData(res.data);
-                setInitialData(res.data);
             }
             catch (error) {
                 navigate('/error')
