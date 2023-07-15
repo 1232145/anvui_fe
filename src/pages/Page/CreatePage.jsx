@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../../components/Api/api'
 import Loading from '../../components/Loading'
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import QuillForm from '../../utility/QuillForm';
 
 const { Item } = Form;
@@ -106,14 +106,6 @@ const CreatePage = () => {
         }
     }, []);
 
-    const validateInput = (_, value) => {
-        if (!value || value.length < 7) {
-            return Promise.reject(new Error('Please enter a word with at least 7 characters'));
-        }
-
-        return Promise.resolve();
-    };
-
     const handleInput = (e) => {
         const value = e.currentTarget.value;
         const slug = value.toLowerCase()
@@ -128,11 +120,18 @@ const CreatePage = () => {
     }
 
     const onFinish = async () => {
-        console.log(data);
-        await api.post(url, data).then(res => {
-            console.log(res.data);
-            navigate('/page');
-        }).catch(err => navigate('/error'));
+        if (!data || !data.title) {
+            message.error('Vui lòng nhập tiêu đề bài viết.');
+        }
+        else if (data.title.length < 7) {
+            message.error('Tiêu đề dài hơn 6 kí tự.');
+        }
+        else {
+            await api.post(url, data).then(res => {
+                console.log(res.data);
+                navigate('/page');
+            }).catch(err => navigate('/error'));
+        }
     }
 
     return (
@@ -157,10 +156,6 @@ const CreatePage = () => {
                                         <Input
                                             value={data?.title}
                                             onChange={(e) => handleInput(e)}
-                                            rules={[
-                                                { required: true, message: 'Please enter a value' },
-                                                { validator: validateInput },
-                                            ]}
                                             style={{ width: '60%', margin: '0px 0px 10px 0px' }}
                                         />
                                         <span>Đường dẫn: {data?.alias}</span>
