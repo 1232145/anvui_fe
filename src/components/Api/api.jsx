@@ -10,14 +10,25 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
+  (response) => {
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      response.headers['Authorization'] = `Bearer ${accessToken}`;
     }
-    return config;
+    return response;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401 && error.response.data.message === 'Expired token') {
+      localStorage.removeItem('accessToken');
+      window.location.reload();
+    }
     return Promise.reject(error);
   }
 );
