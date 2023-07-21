@@ -1,24 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { api } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../Loading';
+import ErrorLogin from '../../pages/Error/ErrorLoginPage';
 
 const { Title } = Typography;
 const url = '/login';
 
 const Login = ({setLogin}) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
 
   const onFinish = async (values) => {
-    // Handle form submission logic here
-    await api.post(url, values)
-    .then(res => {
-      localStorage.setItem('accessToken', res.data.access_token);
+    try {
+      setLoading(true);
+      const res = await api.post(url, values);
+      const data = res.data;
+      localStorage.setItem('accessToken', data.access_token);
       setLogin(true);
       navigate('/');
-    })
-    .catch(err => console.log(err))
+    }
+    catch(err) {
+      const errorMsg = err.response.data.error;
+      setError(true);
+      setErrMsg(errorMsg);
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -26,8 +39,22 @@ const Login = ({setLogin}) => {
     // Display error messages or perform other actions
   };
 
+  if (error) {
+    return (
+      <>
+        <ErrorLogin msg={errMsg} setError={setError}/>
+      </>
+    )
+  }
+
   return (
-    <div
+    <>
+    {
+      loading ? 
+      <><Loading /></>
+      :
+      <div>
+        <div
       style={{
         display: 'flex',
         justifyContent: 'center',
@@ -88,6 +115,9 @@ const Login = ({setLogin}) => {
         </Form>
       </div>
     </div>
+      </div>
+    }
+    </>
   );
 };
 
