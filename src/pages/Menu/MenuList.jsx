@@ -29,9 +29,10 @@ const MenuList = () => {
           <Switch
             checked={record.status}
             onChange={(checked) => {
-              let update = { ...menuData };
-              update[record.position][record.stt - 1].status = checked;
-              setMenuData(update);
+              let update = {...menuData};
+              const lang = record.id_lang === 11 ? 'vietnam' : 'english';
+              update[lang][record.position].find(item => item.id === record.id).status = checked;
+              setMenuData(update); //Change this to post...
             }}
           />
         )
@@ -56,6 +57,11 @@ const MenuList = () => {
     },
   ];
 
+  const handleCreateMenu = () => {
+    form.resetFields();
+    setCreateMenu(true);
+  }
+
   const handleSubmit = () => {
     // Close the modal after handling the submission
     console.log("Created menu", form.getFieldValue);
@@ -77,10 +83,10 @@ const MenuList = () => {
         const temp = data.reduce((result, item, index) => {
           const { id_lang, type, parent_id } = item;
           const langKey = id_lang === 11 ? 'vietnam' : 'english';
-          const sectionKey = type === 1 ? 'MenuTop' : 'MenuBottom';
+          const sectionKey = type === 1 ? 'top' : 'bottom';
 
-          const position = `${langKey}${sectionKey}`;
-          const sectionItems = result[position];
+          const position = langKey + sectionKey;
+          const sectionItems = result[langKey][sectionKey];
 
           if (parent_id) {
             item.stt = "--";
@@ -88,7 +94,7 @@ const MenuList = () => {
             const parentIndex = sectionItems.findIndex((item) => item.id === parent_id);
             sectionItems.splice(parentIndex + 1, 0, item);
           } else {
-            const lenKey = position + 'len';
+            const lenKey = position;
             if (!result[lenKey]) {
               result[lenKey] = 0;
             }
@@ -97,12 +103,19 @@ const MenuList = () => {
           }
 
           item.key = index;
-          item.position = position;
+          item.position = sectionKey;
+          item.language = id_lang;
 
           return result;
         }, {
-          vietnamMenuTop: [], vietnamMenuBottom: [],
-          englishMenuTop: [], englishMenuBottom: [],
+          vietnam: {
+            top: [],
+            bottom: [],
+          },
+          english: {
+            top: [],
+            bottom: [],
+          }
         });
 
         setMenuData(temp);
@@ -128,7 +141,7 @@ const MenuList = () => {
           <div style={{ padding: '24px' }}>
             <Alert message="Sử dụng menu mặc định của giao diện khi menu không được nhập." type="warning" />
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px', marginTop: '16px' }}>
-              <Button type="dashed" onClick={() => setCreateMenu(true)} icon={<PlusOutlined />}>
+              <Button type="dashed" onClick={handleCreateMenu} icon={<PlusOutlined />}>
                 Create Menu
               </Button>
             </div>
@@ -138,14 +151,14 @@ const MenuList = () => {
                 <div>
                   <h3>Menu trên</h3>
                   {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.vietnamMenuTop} columns={columns} pagination={false} />
+                  <Table dataSource={menuData.vietnam?.top} columns={columns} pagination={false} />
                 </div>
               </Col>
               <Col span={12}>
                 <div>
                   <h3>Menu dưới</h3>
                   {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.vietnamMenuBottom} columns={columns} pagination={false} />
+                  <Table dataSource={menuData.vietnam?.bottom} columns={columns} pagination={false} />
                 </div>
               </Col>
             </Row>
@@ -155,14 +168,14 @@ const MenuList = () => {
                 <div>
                   <h3>Menu trên</h3>
                   {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.englishMenuTop} columns={columns} pagination={false} />
+                  <Table dataSource={menuData.english?.top} columns={columns} pagination={false} />
                 </div>
               </Col>
               <Col span={12}>
                 <div>
                   <h3>Menu dưới</h3>
                   {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.englishMenuBottom} columns={columns} pagination={false} />
+                  <Table dataSource={menuData.english?.bottom} columns={columns} pagination={false} />
                 </div>
               </Col>
             </Row>
@@ -194,8 +207,8 @@ const MenuList = () => {
                 </Form.Item>
                 <Form.Item name="position" label="Vị trí" initialValue="Trên">
                   <Select>
-                    <Option value="MenuTop">Trên</Option>
-                    <Option value="MenuBottom">Dưới</Option>
+                    <Option value="top">Trên</Option>
+                    <Option value="bottom">Dưới</Option>
                   </Select>
                 </Form.Item>
                 <Form.Item name="sort" label="Sắp xếp">
