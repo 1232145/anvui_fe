@@ -31,7 +31,8 @@ const MenuList = () => {
             onChange={(checked) => {
               let update = {...menuData};
               const lang = record.id_lang === 11 ? 'vietnam' : 'english';
-              update[lang][record.position].find(item => item.id === record.id).status = checked;
+              const position = record.type === 1 ? 'top' : 'bottom';
+              update[lang][position].find(item => item.id === record.id).status = checked;
               setMenuData(update); //Change this to post...
             }}
           />
@@ -103,8 +104,6 @@ const MenuList = () => {
           }
 
           item.key = index;
-          item.position = sectionKey;
-          item.language = id_lang;
 
           return result;
         }, {
@@ -196,7 +195,7 @@ const MenuList = () => {
                 <Form.Item name="link" label="Đường dẫn">
                   <Input />
                 </Form.Item>
-                <Form.Item name="language" label="Ngôn ngữ" initialValue="Tiếng Việt">
+                <Form.Item name="id_lang" label="Ngôn ngữ" initialValue="Tiếng Việt">
                   <Select>
                     <Option value={11}>Tiếng Việt</Option>
                     <Option value={12}>English</Option>
@@ -205,10 +204,10 @@ const MenuList = () => {
                 <Form.Item name="status" label="Hiển thị" valuePropName="checked">
                   <Switch />
                 </Form.Item>
-                <Form.Item name="position" label="Vị trí" initialValue="Trên">
+                <Form.Item name="type" label="Vị trí" initialValue="Trên">
                   <Select>
-                    <Option value="top">Trên</Option>
-                    <Option value="bottom">Dưới</Option>
+                    <Option value={1}>Trên</Option>
+                    <Option value={2}>Dưới</Option>
                   </Select>
                 </Form.Item>
                 <Form.Item name="sort" label="Sắp xếp">
