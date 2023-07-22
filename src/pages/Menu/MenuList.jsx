@@ -13,6 +13,7 @@ const MenuList = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuData, setMenuData] = useState({});
+  const [disableType, setDisableType] = useState(false);
   const [form] = Form.useForm();
 
   // Define the table columns...
@@ -28,12 +29,20 @@ const MenuList = () => {
         return (
           <Switch
             checked={record.status}
-            onChange={(checked) => {
-              let update = {...menuData};
+            onChange={async (checked) => {
+              let update = { ...menuData };
+
               const lang = record.id_lang === 11 ? 'vietnam' : 'english';
               const position = record.type === 1 ? 'top' : 'bottom';
-              update[lang][position].find(item => item.id === record.id).status = checked;
-              setMenuData(update); //Change this to post...
+
+              let item = update[lang][position].find(item => item.id === record.id);
+              item.status = checked;
+
+              await api.put(location.pathname, item).then(res => {
+                console.log(res.data);
+                setMenuData(update);
+              })
+                .catch(err => navigate('/error'));
             }}
           />
         )
@@ -47,16 +56,31 @@ const MenuList = () => {
       render: (_, record) => (
         <Space>
           <Button icon={<EditOutlined />} size="small" type="primary"
-            onClick={() => {
-              form.setFieldsValue(record);
-              setCreateMenu(true);
-            }}
+            onClick={() => handleEditMenu(record)}
           />
           <Button icon={<DeleteOutlined />} size="small" type="primary" danger />
         </Space>
       ),
     },
   ];
+
+  const handleParentIdChange = (value) => {
+    if (value === 0) {
+      setDisableType(false);
+    } 
+    else {
+      const selectedMenu = menuData.parent.find(item => item.id === value);
+      if (selectedMenu) {
+        setDisableType(true);
+        form.setFieldsValue({ type: selectedMenu.type });
+      }
+    }
+  };
+
+  const handleEditMenu = (record) => {
+    form.setFieldsValue(record);
+    setCreateMenu(true);
+  }
 
   const handleCreateMenu = () => {
     form.resetFields();
@@ -65,13 +89,21 @@ const MenuList = () => {
 
   const handleSubmit = () => {
     // Close the modal after handling the submission
-    console.log("Created menu", form.getFieldValue);
+    const data = form.getFieldsValue();
+
+
     setCreateMenu(false);
   };
 
   const handleCancel = () => {
     form.resetFields();
     setCreateMenu(false);
+    setDisableType(false);
+  }
+
+  const refreshPage = () => {
+    window.location.reload();
+    window.scrollTo(0, 0);
   }
 
   useEffect(() => {
@@ -101,6 +133,7 @@ const MenuList = () => {
             }
             item.stt = ++result[lenKey];
             sectionItems.push(item);
+            result.parent.push(item);
           }
 
           item.key = index;
@@ -114,7 +147,8 @@ const MenuList = () => {
           english: {
             top: [],
             bottom: [],
-          }
+          },
+          parent: []
         });
 
         setMenuData(temp);
@@ -195,7 +229,7 @@ const MenuList = () => {
                 <Form.Item name="link" label="Đường dẫn">
                   <Input />
                 </Form.Item>
-                <Form.Item name="id_lang" label="Ngôn ngữ" initialValue="Tiếng Việt">
+                <Form.Item name="id_lang" label="Ngôn ngữ" initialValue={11}>
                   <Select>
                     <Option value={11}>Tiếng Việt</Option>
                     <Option value={12}>English</Option>
@@ -204,14 +238,29 @@ const MenuList = () => {
                 <Form.Item name="status" label="Hiển thị" valuePropName="checked">
                   <Switch />
                 </Form.Item>
-                <Form.Item name="type" label="Vị trí" initialValue="Trên">
-                  <Select>
+                <Form.Item name="parent_id" label="Menu cha" initialValue={0}>
+                  <Select onChange={handleParentIdChange}>
+                    <Option value={0}>Menu cha</Option>
+                    {
+                      menuData.parent?.map(item => {
+                        const position = item.type === 1 ? "Menu trên" : "Menu dưới";
+                        return (
+                          <Option key={item.id} value={item.id}>{item.namemenu}-{position}</Option>
+                        )
+                      })
+                    }
+                  </Select>
+                </Form.Item>
+                <Form.Item name="type" label="Vị trí" initialValue={1}>
+                  <Select disabled={disableType || form.getFieldValue("parent_id") !== 0}>
                     <Option value={1}>Trên</Option>
                     <Option value={2}>Dưới</Option>
                   </Select>
                 </Form.Item>
                 <Form.Item name="sort" label="Sắp xếp">
                   <InputNumber />
+                </Form.Item>
+                <Form.Item>
                 </Form.Item>
               </Form>
             </Modal>
