@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Alert, Button, Modal, Form, Input, Select, Row, Col, Space, Switch } from 'antd';
+import { Table, Alert, Button, Modal, Form, Input, Select, Row, Col, Space, Switch, InputNumber } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { api } from '../../components/Api/api';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ const MenuList = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuData, setMenuData] = useState({});
+  const [form] = Form.useForm();
 
   // Define the table columns...
   const columns = [
@@ -28,7 +29,7 @@ const MenuList = () => {
           <Switch
             checked={record.status}
             onChange={(checked) => {
-              let update = {...menuData};
+              let update = { ...menuData };
               update[record.position][record.stt - 1].status = checked;
               setMenuData(update);
             }}
@@ -43,7 +44,12 @@ const MenuList = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button icon={<EditOutlined />} size="small" type="primary" />
+          <Button icon={<EditOutlined />} size="small" type="primary"
+            onClick={() => {
+              form.setFieldsValue(record);
+              setCreateMenu(true);
+            }}
+          />
           <Button icon={<DeleteOutlined />} size="small" type="primary" danger />
         </Space>
       ),
@@ -52,9 +58,14 @@ const MenuList = () => {
 
   const handleSubmit = () => {
     // Close the modal after handling the submission
-    console.log("Created menu");
+    console.log("Created menu", form.getFieldValue);
     setCreateMenu(false);
   };
+
+  const handleCancel = () => {
+    form.resetFields();
+    setCreateMenu(false);
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,29 +75,40 @@ const MenuList = () => {
         const data = res.data;
 
         const temp = data.reduce((result, item, index) => {
-          const { id_lang, type } = item;
+          const { id_lang, type, parent_id } = item;
           const langKey = id_lang === 11 ? 'vietnam' : 'english';
           const sectionKey = type === 1 ? 'MenuTop' : 'MenuBottom';
 
           const position = `${langKey}${sectionKey}`;
           const sectionItems = result[position];
-          item.stt = sectionItems.length + 1;
+
+          if (parent_id) {
+            item.stt = "--";
+            // find correct position
+            const parentIndex = sectionItems.findIndex((item) => item.id === parent_id);
+            sectionItems.splice(parentIndex + 1, 0, item);
+          } else {
+            const lenKey = position + 'len';
+            if (!result[lenKey]) {
+              result[lenKey] = 0;
+            }
+            item.stt = ++result[lenKey];
+            sectionItems.push(item);
+          }
+
           item.key = index;
-          //for easy access of status switch
           item.position = position;
-          sectionItems.push(item);
 
           return result;
         }, {
-          vietnamMenuTop: [],
-          vietnamMenuBottom: [],
-          englishMenuTop: [],
-          englishMenuBottom: []
+          vietnamMenuTop: [], vietnamMenuBottom: [],
+          englishMenuTop: [], englishMenuBottom: [],
         });
 
         setMenuData(temp);
       }
       catch (err) {
+        console.log(err);
         navigate('/error');
       }
       finally {
@@ -150,14 +172,35 @@ const MenuList = () => {
               open={createMenu}
               onCancel={() => setCreateMenu(false)}
               footer={[
-                <Button key="cancel" onClick={() => setCreateMenu(false)}>Cancel</Button>,
-                <Button key="submit" type="primary" onClick={handleSubmit}>
-                  Submit
-                </Button>,
+                <Button key="submit" type="primary" onClick={handleSubmit}>Submit</Button>,
+                <Button key="cancel" onClick={handleCancel}>Cancel</Button>,
               ]}
             >
-              <Form>
-                {/* Additional form fields for creating a new menu */}
+              <Form form={form}>
+                <Form.Item name="namemenu" label="Tiêu đề">
+                  <Input />
+                </Form.Item>
+                <Form.Item name="link" label="Đường dẫn">
+                  <Input />
+                </Form.Item>
+                <Form.Item name="language" label="Ngôn ngữ" initialValue="Tiếng Việt">
+                  <Select>
+                    <Option value={11}>Tiếng Việt</Option>
+                    <Option value={12}>English</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item name="status" label="Hiển thị" valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+                <Form.Item name="position" label="Vị trí" initialValue="Trên">
+                  <Select>
+                    <Option value="MenuTop">Trên</Option>
+                    <Option value="MenuBottom">Dưới</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item name="sort" label="Sắp xếp">
+                  <InputNumber />
+                </Form.Item>
               </Form>
             </Modal>
           </div>
