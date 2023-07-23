@@ -79,6 +79,11 @@ const MenuList = () => {
 
   const handleEditMenu = (record) => {
     form.setFieldsValue(record);
+    
+    if (record.parent_id !== 0) {
+      setDisableType(true);
+    }
+
     setCreateMenu(true);
   }
 
@@ -252,7 +257,7 @@ const MenuList = () => {
                   </Select>
                 </Form.Item>
                 <Form.Item name="type" label="Vị trí" initialValue={1}>
-                  <Select disabled={disableType || form.getFieldValue("parent_id") !== 0}>
+                  <Select disabled={disableType}>
                     <Option value={1}>Trên</Option>
                     <Option value={2}>Dưới</Option>
                   </Select>
