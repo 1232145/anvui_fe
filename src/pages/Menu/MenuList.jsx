@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 
 const { Option } = Select;
+const { Item } = Form;
 
 const MenuList = () => {
   const [createMenu, setCreateMenu] = useState(false);
@@ -67,7 +68,7 @@ const MenuList = () => {
   const handleParentIdChange = (value) => {
     if (value === 0) {
       setDisableType(false);
-    } 
+    }
     else {
       const selectedMenu = menuData.parent.find(item => item.id === value);
       if (selectedMenu) {
@@ -79,7 +80,7 @@ const MenuList = () => {
 
   const handleEditMenu = (record) => {
     form.setFieldsValue(record);
-    
+
     if (record.parent_id !== 0) {
       setDisableType(true);
     }
@@ -92,10 +93,19 @@ const MenuList = () => {
     setCreateMenu(true);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Close the modal after handling the submission
     const data = form.getFieldsValue();
 
+    if (!data.namemenu || !data.link) {
+      return;
+    }
+
+    await api.post(location.pathname, data).then(res => {
+      console.log(res.data);
+      refreshPage();
+    })
+      .catch(error => navigate('/error'));
 
     setCreateMenu(false);
   };
@@ -228,45 +238,64 @@ const MenuList = () => {
               ]}
             >
               <Form form={form}>
-                <Form.Item name="namemenu" label="Tiêu đề">
+                <Item name="id" hidden />
+                <Item name="namemenu" label="Tiêu đề"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Xin vui lòng điền tiêu đề!',
+                    },
+                  ]}
+                >
                   <Input />
-                </Form.Item>
-                <Form.Item name="link" label="Đường dẫn">
+                </Item>
+                <Item name="link" label="Đường dẫn"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Xin vui lòng điền đường dẫn!',
+                    },
+                  ]}
+                >
                   <Input />
-                </Form.Item>
-                <Form.Item name="id_lang" label="Ngôn ngữ" initialValue={11}>
+                </Item>
+                <Item name="id_lang" label="Ngôn ngữ" initialValue={11}>
                   <Select>
                     <Option value={11}>Tiếng Việt</Option>
                     <Option value={12}>English</Option>
                   </Select>
-                </Form.Item>
-                <Form.Item name="status" label="Hiển thị" valuePropName="checked">
+                </Item>
+                <Item name="status" label="Hiển thị" valuePropName="checked">
                   <Switch />
-                </Form.Item>
-                <Form.Item name="parent_id" label="Menu cha" initialValue={0}>
-                  <Select onChange={handleParentIdChange}>
-                    <Option value={0}>Menu cha</Option>
-                    {
-                      menuData.parent?.map(item => {
-                        const position = item.type === 1 ? "Menu trên" : "Menu dưới";
-                        return (
-                          <Option key={item.id} value={item.id}>{item.namemenu}-{position}</Option>
-                        )
-                      })
-                    }
-                  </Select>
-                </Form.Item>
-                <Form.Item name="type" label="Vị trí" initialValue={1}>
+                </Item>
+                {
+                  !menuData.parent?.some(item => item.namemenu === form.getFieldValue("namemenu")) &&
+                  (
+                    <Item name="parent_id" label="Menu cha" initialValue={0}>
+                      <Select onChange={handleParentIdChange}>
+                        <Option value={0}>Menu cha</Option>
+                        {
+                          menuData.parent?.map(item => {
+                            const position = item.type === 1 ? "Menu trên" : "Menu dưới";
+
+                            return (
+                              <Option key={item.id} value={item.id}>{item.namemenu}-{position}</Option>
+                            )
+                          })
+                        }
+                      </Select>
+                    </Item>
+                  )
+                }
+                <Item name="type" label="Vị trí" initialValue={1}>
                   <Select disabled={disableType}>
                     <Option value={1}>Trên</Option>
                     <Option value={2}>Dưới</Option>
                   </Select>
-                </Form.Item>
-                <Form.Item name="sort" label="Sắp xếp">
+                </Item>
+                <Item name="sort" label="Sắp xếp">
                   <InputNumber />
-                </Form.Item>
-                <Form.Item>
-                </Form.Item>
+                </Item>
               </Form>
             </Modal>
           </div>
