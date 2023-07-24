@@ -8,8 +8,9 @@ import 'react-quill/dist/quill.snow.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import QuillForm from '../../utility/QuillForm';
 
+const { Item } = Form;
+
 function Payment() {
-  const { Item } = Form;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
