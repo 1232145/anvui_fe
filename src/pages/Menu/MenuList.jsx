@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Alert, Button, Modal, Form, Input, Select, Row, Col, Space, Switch, InputNumber } from 'antd';
+import { Table, Alert, Button, Modal, Form, Input, Select, Row, Col, Space, Switch, InputNumber, Popconfirm, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { api } from '../../components/Api/api';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -40,7 +40,6 @@ const MenuList = () => {
               item.status = checked;
 
               await api.put(location.pathname, item).then(res => {
-                console.log(res.data);
                 setMenuData(update);
               })
                 .catch(err => navigate('/error'));
@@ -56,10 +55,23 @@ const MenuList = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button icon={<EditOutlined />} size="small" type="primary"
+          <Button
+            type="primary"
+            style={{ marginRight: 10 }}
+            ghost
+            size="small"
+            icon={<EditOutlined />}
             onClick={() => handleEditMenu(record)}
           />
-          <Button icon={<DeleteOutlined />} size="small" type="primary" danger />
+          <Popconfirm
+            title="Bạn chắc chắn muốn xóa! Điều này sẽ xóa cả menu con của menu này."
+            okText="Yes"
+            cancelText="No"
+            placement="topRight"
+            onConfirm={() => handleDeleteMenu(record)}
+          >
+            <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -97,18 +109,31 @@ const MenuList = () => {
     // Close the modal after handling the submission
     const data = form.getFieldsValue();
 
-    if (!data.namemenu || !data.link) {
-      return;
+    if (!data || !data.namemenu) {
+      message.error('Vui lòng nhập tiêu đề.');
     }
+    else if (!data.link) {
+      message.error('Vui lòng nhập đường dẫn.');
+    }
+    else {
+      await api.post(location.pathname, data).then(res => {
+        console.log(res.data);
+        refreshPage();
+      })
+        .catch(error => navigate('/error'));
 
-    await api.post(location.pathname, data).then(res => {
+      setCreateMenu(false);
+    }
+  };
+
+  const handleDeleteMenu = async (record) => {
+    const query = `?id=${record.id}`;
+    await api.delete(location.pathname + query).then(res => {
       console.log(res.data);
       refreshPage();
     })
-      .catch(error => navigate('/error'));
-
-    setCreateMenu(false);
-  };
+      .catch(err => navigate('/error'));
+  }
 
   const handleCancel = () => {
     form.resetFields();
@@ -117,8 +142,7 @@ const MenuList = () => {
   }
 
   const refreshPage = () => {
-    window.location.reload();
-    window.scrollTo(0, 0);
+    navigate(0);
   }
 
   useEffect(() => {

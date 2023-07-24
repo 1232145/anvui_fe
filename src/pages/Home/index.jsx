@@ -121,8 +121,7 @@ function Home() {
   };
 
   const refreshPage = () => {
-    window.location.reload();
-    window.scrollTo(0, 0);
+    navigate(0);
   }
 
   const cancel = () => {
