@@ -19,7 +19,7 @@ const MenuList = () => {
 
   // Define the table columns...
   const columns = [
-    { title: 'Stt', dataIndex: 'stt', key: 'stt' },
+    { title: 'Stt', dataIndex: 'stt', key: 'stt', sorter: (a, b) => a.stt - b.stt },
     { title: 'Tiêu đề', dataIndex: 'namemenu', key: 'namemenu' },
     { title: 'Ngôn ngữ', dataIndex: 'language', key: 'language' },
     {
@@ -48,7 +48,7 @@ const MenuList = () => {
         )
       },
     },
-    { title: 'Sắp xếp', dataIndex: 'sort', key: 'sort' },
+    { title: 'Sắp xếp', dataIndex: 'sort', key: 'sort', sorter: (a, b) => a.sort - b.sort },
     {
       title: 'Actions',
       dataIndex: 'actions',
@@ -116,8 +116,11 @@ const MenuList = () => {
       message.error('Vui lòng nhập đường dẫn.');
     }
     else {
+      if (!data.sort) {
+        data.sort = 0;
+      }
+
       await api.post(location.pathname, data).then(res => {
-        console.log(res.data);
         refreshPage();
       })
         .catch(error => navigate('/error'));
@@ -129,7 +132,6 @@ const MenuList = () => {
   const handleDeleteMenu = async (record) => {
     const query = `?id=${record.id}`;
     await api.delete(location.pathname + query).then(res => {
-      console.log(res.data);
       refreshPage();
     })
       .catch(err => navigate('/error'));
@@ -176,6 +178,8 @@ const MenuList = () => {
           }
 
           item.key = index;
+          //for easy table data display
+          item.language = id_lang === 11 ? "Tiếng Việt" : "Tiếng Anh"
 
           return result;
         }, {
