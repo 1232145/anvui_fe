@@ -126,6 +126,7 @@ const MenuList = () => {
         .catch(error => navigate('/error'));
 
       setCreateMenu(false);
+      setDisable(false);
     }
   };
 
