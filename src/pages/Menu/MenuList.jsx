@@ -14,7 +14,7 @@ const MenuList = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuData, setMenuData] = useState({});
-  const [disableType, setDisableType] = useState(false);
+  const [disable, setDisable] = useState(false);
   const [form] = Form.useForm();
 
   // Define the table columns...
@@ -67,13 +67,13 @@ const MenuList = () => {
 
   const handleParentIdChange = (value) => {
     if (value === 0) {
-      setDisableType(false);
+      setDisable(false);
     }
     else {
       const selectedMenu = menuData.parent.find(item => item.id === value);
       if (selectedMenu) {
-        setDisableType(true);
-        form.setFieldsValue({ type: selectedMenu.type });
+        setDisable(true);
+        form.setFieldsValue({ type: selectedMenu.type, id_lang: selectedMenu.id_lang });
       }
     }
   };
@@ -82,7 +82,7 @@ const MenuList = () => {
     form.setFieldsValue(record);
 
     if (record.parent_id !== 0) {
-      setDisableType(true);
+      setDisable(true);
     }
 
     setCreateMenu(true);
@@ -113,7 +113,7 @@ const MenuList = () => {
   const handleCancel = () => {
     form.resetFields();
     setCreateMenu(false);
-    setDisableType(false);
+    setDisable(false);
   }
 
   const refreshPage = () => {
@@ -260,7 +260,7 @@ const MenuList = () => {
                   <Input />
                 </Item>
                 <Item name="id_lang" label="Ngôn ngữ" initialValue={11}>
-                  <Select>
+                  <Select disabled={disable}>
                     <Option value={11}>Tiếng Việt</Option>
                     <Option value={12}>English</Option>
                   </Select>
@@ -288,7 +288,7 @@ const MenuList = () => {
                   )
                 }
                 <Item name="type" label="Vị trí" initialValue={1}>
-                  <Select disabled={disableType}>
+                  <Select disabled={disable}>
                     <Option value={1}>Trên</Option>
                     <Option value={2}>Dưới</Option>
                   </Select>
