@@ -116,8 +116,8 @@ function Home() {
     await api.put(location.pathname, processData(values, "out"))
       .then(res => {
         console.log(res.data);
-        setLoading(false);
         refreshPage();
+        setLoading(false);
       })
       .catch(err => navigate('/error'));
   };

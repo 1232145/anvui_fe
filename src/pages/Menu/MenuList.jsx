@@ -43,8 +43,8 @@ const MenuList = () => {
 
               setSwitchLoading(true);
               await api.put(location.pathname, item).then(res => {
-                setSwitchLoading(false);
                 setMenuData(update);
+                setSwitchLoading(false);
               })
                 .catch(err => navigate('/error'));
             }}
@@ -127,13 +127,13 @@ const MenuList = () => {
       setLoading(true);
       await api.post(location.pathname, data).then(res => {
         console.log(res.data);
-        setLoading(false);
         refreshPage();
       })
         .catch(error => navigate('/error'));
 
       setCreateMenu(false);
       setDisable(false);
+      setLoading(false);
     }
   };
 
@@ -141,8 +141,8 @@ const MenuList = () => {
     const query = `?id=${record.id}`;
     setLoading(true);
     await api.delete(location.pathname + query).then(res => {
-      setLoading(false);
       refreshPage();
+      setLoading(false);
     })
       .catch(err => navigate('/error'));
   }

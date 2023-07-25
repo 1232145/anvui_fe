@@ -50,8 +50,8 @@ function Domain() {
     await api.put(location.pathname, out)
     .then(res => {
       console.log(res.data);
-      setLoading(false);
       refreshPage();
+      setLoading(false);
     })
     .catch(err => console.log(err));
   }

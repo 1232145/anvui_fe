@@ -33,10 +33,12 @@ function CSSCustom() {
   }, []);
 
   const onFinish = async (values) => {
+    setLoading(true);
     await api.put(location.pathname, values)
       .then(res => {
         console.log(res.data);
         refreshPage();
+        setLoading(false);
       })
       .catch(err => navigate('/error'));
   }

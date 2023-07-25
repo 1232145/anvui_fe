@@ -42,8 +42,8 @@ const Page = () => {
                     setLoading(true);
                     await api.delete(location.pathname + query).then(res => {
                         console.log(res.data);
-                        setLoading(false);
                         refreshPage();
+                        setLoading(false);
                     })
                         .catch(err => navigate('/error'));
                 }
