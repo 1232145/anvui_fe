@@ -15,6 +15,7 @@ const MenuList = () => {
   const navigate = useNavigate();
   const [menuData, setMenuData] = useState({});
   const [disable, setDisable] = useState(false);
+  const [switchLoading, setSwitchLoading] = useState(false);
   const [form] = Form.useForm();
 
   // Define the table columns...
@@ -30,6 +31,7 @@ const MenuList = () => {
         return (
           <Switch
             checked={record.status}
+            loading={switchLoading}
             onChange={async (checked) => {
               let update = { ...menuData };
 
@@ -39,7 +41,9 @@ const MenuList = () => {
               let item = update[lang][position].find(item => item.id === record.id);
               item.status = checked;
 
+              setSwitchLoading(true);
               await api.put(location.pathname, item).then(res => {
+                setSwitchLoading(false);
                 setMenuData(update);
               })
                 .catch(err => navigate('/error'));
@@ -120,7 +124,10 @@ const MenuList = () => {
         data.sort = 0;
       }
 
+      setLoading(true);
       await api.post(location.pathname, data).then(res => {
+        console.log(res.data);
+        setLoading(false);
         refreshPage();
       })
         .catch(error => navigate('/error'));
@@ -132,7 +139,9 @@ const MenuList = () => {
 
   const handleDeleteMenu = async (record) => {
     const query = `?id=${record.id}`;
+    setLoading(true);
     await api.delete(location.pathname + query).then(res => {
+      setLoading(false);
       refreshPage();
     })
       .catch(err => navigate('/error'));

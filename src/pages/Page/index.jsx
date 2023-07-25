@@ -39,8 +39,10 @@ const Page = () => {
 
                 const handleDeleteEntry = async (item) => {
                     const query = `?id=${item.id}`;
+                    setLoading(true);
                     await api.delete(location.pathname + query).then(res => {
                         console.log(res.data);
+                        setLoading(false);
                         refreshPage();
                     })
                         .catch(err => navigate('/error'));

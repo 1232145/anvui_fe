@@ -112,12 +112,14 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
+    setLoading(true);
     await api.put(location.pathname, processData(values, "out"))
       .then(res => {
         console.log(res.data);
+        setLoading(false);
         refreshPage();
       })
-      .catch(err => console.log(err));
+      .catch(err => navigate('/error'));
   };
 
   const refreshPage = () => {

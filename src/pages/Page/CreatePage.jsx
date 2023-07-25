@@ -128,8 +128,10 @@ const CreatePage = () => {
         }
         else {
             const out = {...data, id: id};
+            setLoading(true);
             await api.post(url, out).then(res => {
                 console.log(res.data);
+                setLoading(false);
                 navigate('/page');
             }).catch(err => navigate('/error'));
         }

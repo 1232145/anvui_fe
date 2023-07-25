@@ -71,8 +71,10 @@ function Payment() {
     params.payments_method = JSON.stringify(array);
     params.paymentNote = quillData;
 
+    setLoading(true);
     await api.put(location.pathname, params).then(res => {
       console.log(res.data)
+      setLoading(false);
       refreshPage();
     })
       .catch(err => navigate('/error'));

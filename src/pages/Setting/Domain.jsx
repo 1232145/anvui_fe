@@ -46,9 +46,11 @@ function Domain() {
 
   const onFinish = async (values) => {
     const out = {domain: processData(values.domain, "out")};
+    setLoading(true);
     await api.put(location.pathname, out)
     .then(res => {
       console.log(res.data);
+      setLoading(false);
       refreshPage();
     })
     .catch(err => console.log(err));
