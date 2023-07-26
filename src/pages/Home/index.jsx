@@ -36,7 +36,7 @@ const imgOptions = [
   "icon", "logo_bottom", "img", "default_facebook_img"
 ];
 
-const host = 'https://cdn.anvui.vn/';
+//const host = 'https://cdn.anvui.vn/';
 
 /*
 Back up:
