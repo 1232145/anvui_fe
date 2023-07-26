@@ -38,8 +38,17 @@ const imgOptions = [
 
 const host = 'https://cdn.anvui.vn/';
 
+/*
+Back up:
+img: upload/web/2022/08/29/1661740619_blue.png.png
+icon: upload/web/2022/05/29/1653836231_2022_05_16_07_52_img_3180.jpg.JPG
+logo_bottom: upload/web/2022/06/10/1654854949_hoa-huong-duong_112958596-1.jpg.jpg
+default_facebook_img: upload/web/2022/09/15/1663225385_screen-shot-2022-06-12-at-10.21.01.png.png
+*/
+
 function Home() {
   const [data, setData] = useState({});
+  const [imageHolder, setImageHolder] = useState({});
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -49,7 +58,10 @@ function Home() {
     try {
       setLoading(true);
       const res = await api.get(location.pathname);
-      setData(processData(res.data, "in"));
+      const procData = processData(res.data, "in");
+
+      setData(procData);
+      resetImageHolder(procData);
     }
     catch (err) {
       console.log(err);
@@ -60,6 +72,17 @@ function Home() {
     }
   }
 
+  const resetImageHolder = (data) => {
+    const images = imgOptions.reduce((acc, key) => {
+      if (data[key]) {
+        acc[key] = data[key];
+      }
+      return acc;
+    }, {});
+
+    setImageHolder(images);
+  }
+
   //process data
   const processData = (data, type) => {
     if (type === "in") {
@@ -67,14 +90,14 @@ function Home() {
       data.apps = JSON.parse(data.apps);
       data.socials = JSON.parse(data.socials);
 
-      imgOptions.forEach(item => data[item] = host + data[item]);
+      // imgOptions.forEach(item => data[item] = host + data[item]);
     }
     else if (type === "out") {
       data.address = JSON.stringify(data.address);
       data.apps = JSON.stringify(data.apps);
       data.socials = JSON.stringify(data.socials);
 
-      imgOptions.forEach(item => data[item] = data[item].replace(host, ""))
+      // imgOptions.forEach(item => data[item] = data[item].replace(host, ""))
     }
 
     return data;
@@ -88,7 +111,7 @@ function Home() {
     return `${year}/${month}/${day}`;
   }
 
-  const handleFileUpload = (file, type) => {
+  const handleFileUpload = async (file, type) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG images!');
@@ -100,10 +123,9 @@ function Home() {
       return false;
     }
 
-    const date = formatDate(new Date());
-    const imageName = `upload/web/${date}/${file.name}`;
-    console.log(imageName, type);
-    // setData({ ...data, [name]: URL.createObjectURL(file) });
+    setImageHolder({ ...imageHolder, [type]: URL.createObjectURL(file) });
+    form.setFieldValue(type, { file: file, name: file.name });
+
     return false; // Prevent default upload behavior
   };
 
@@ -112,10 +134,26 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
+    const formData = new FormData();
+
+    imgOptions.forEach(item => {
+      if (typeof values[item] === 'object') {
+        const { file, name } = values[item];
+        formData.append('files', file);
+        formData.append(name, item);
+      }
+    });
+
     setLoading(true);
+    await api.put('/upload-file', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then(res => {
+      res.data.forEach(item => values[item.name] = item.url);
+    });
     await api.put(location.pathname, processData(values, "out"))
       .then(res => {
-        console.log(res.data);
         refreshPage();
         setLoading(false);
       })
@@ -123,11 +161,13 @@ function Home() {
   };
 
   const refreshPage = () => {
-    navigate(0);
+    // navigate(0);
+    window.scrollTo(0, 0);
   }
 
   const cancel = () => {
     form.resetFields();
+    resetImageHolder(data);
     window.scrollTo(0, 0);
   }
 
@@ -160,7 +200,7 @@ function Home() {
                         beforeUpload={(file) => handleFileUpload(file, 'img')}
                         showUploadList={false}
                       >
-                        <Image src={data.img} preview={false} />
+                        <Image src={imageHolder.img} preview={false} />
                       </Upload.Dragger>
                       <div className='form-upload-label'><label>Logo trên</label></div>
                     </Item>
@@ -172,7 +212,7 @@ function Home() {
                         showUploadList={false}
                         name='logo_bottom'
                       >
-                        <Image src={data.logo_bottom} preview={false} />
+                        <Image src={imageHolder.logo_bottom} preview={false} />
                       </Upload.Dragger>
                       <div className='form-upload-label'><label>Logo dưới</label></div>
                     </Item>
@@ -184,7 +224,7 @@ function Home() {
                         showUploadList={false}
                         name='icon'
                       >
-                        <Image src={data.icon} preview={false} />
+                        <Image src={imageHolder.icon} preview={false} />
                       </Upload.Dragger>
                       <div className='form-upload-label'><label>favicon</label></div>
                     </Item>
@@ -196,7 +236,7 @@ function Home() {
                         showUploadList={false}
                         name='default_facebook_img'
                       >
-                        <Image src={data.default_facebook_img} preview={false} />
+                        <Image src={imageHolder.default_facebook_img} preview={false} />
                       </Upload.Dragger>
                       <div className='form-upload-label'><label>Facebook share mặc định</label></div>
                     </Item>
