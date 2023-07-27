@@ -19,7 +19,6 @@ function CSSCustom() {
         setLoading(true);
         const res = await api.get(location.pathname);
         setData(res.data);
-        console.log(res.data);
       }
       catch (err) {
         navigate('/error')
