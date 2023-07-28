@@ -3,7 +3,7 @@ const url = 'https://anvui-be.vercel.app';
 const testUrl = 'http://localhost:5000'
 
 const api = axios.create({
-  baseURL: testUrl, 
+  baseURL: url, 
   headers: {
     'Content-Type': 'application/json',
   },
