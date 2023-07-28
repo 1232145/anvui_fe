@@ -144,26 +144,28 @@ const Slide = () => {
 
   const display = (name, id) => {
     return (
-      <Dragger {...getUploadProps(name, id)} style={draggerStyle} showUploadList={false}>
+      <Dragger {...getUploadProps(name, id)} style={draggerStyle} showUploadList={false} >
         {data[name].length > 0 ? (
           <div style={imagePreviewContainerStyle}>
-            <Image.PreviewGroup>
-              {data[name].map((item) => (
-                <div key={item.id} style={imageContainerStyle}>
-                  <Card
-                    hoverable
-                    cover={<Image src={item.src_link} style={imageStyle} />}
-                    style={cardStyle}
+            {data[name].map((item) => (
+              <div key={item.id} style={imageContainerStyle}>
+                <Card
+                  hoverable
+                  cover={<Image
+                    src={item.src_link}
+                    style={imageStyle}
                     onClick={(e) => handleImageClick(e)}
-                  >
-                    <DeleteOutlined
-                      style={deleteButtonStyle}
-                      onClick={(e) => handleDeleteImage(item, e, name)}
-                    />
-                  </Card>
-                </div>
-              ))}
-            </Image.PreviewGroup>
+                    preview={false}
+                  />}
+                  style={cardStyle}
+                >
+                  <DeleteOutlined
+                    style={deleteButtonStyle}
+                    onClick={(e) => handleDeleteImage(item, e, name)}
+                  />
+                </Card>
+              </div>
+            ))}
           </div>
         ) : (
           <div>
