@@ -73,15 +73,9 @@ function Payment() {
 
     setLoading(true);
     await api.put(location.pathname, params).then(res => {
-      console.log(res.data)
-      refreshPage();
-      setLoading(false);
+      fetchData();
     })
       .catch(err => navigate('/error'));
-  }
-
-  const refreshPage = () => {
-    navigate(0);
   }
 
   const cancel = () => {

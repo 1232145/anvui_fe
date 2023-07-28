@@ -86,21 +86,21 @@ const CreatePage = () => {
     const [form] = Form.useForm();
     const url = location.pathname + `?id=${id}`;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const res = await api.get(url);
-                setData(res.data);
-            }
-            catch (error) {
-                navigate('/error')
-            }
-            finally {
-                setLoading(false);
-            }
-        };
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const res = await api.get(url);
+            setData(res.data);
+        }
+        catch (error) {
+            navigate('/error')
+        }
+        finally {
+            setLoading(false);
+        }
+    }
 
+    useEffect(() => {
         if (id) {
             fetchData();
         }
@@ -130,8 +130,8 @@ const CreatePage = () => {
             const out = {...data, id: id};
             setLoading(true);
             await api.post(url, out).then(res => {
-                console.log(res.data);
                 setLoading(false);
+                message.success("Successfully created.");
                 navigate('/page');
             }).catch(err => navigate('/error'));
         }

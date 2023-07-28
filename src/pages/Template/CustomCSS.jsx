@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { api } from '../../components/Api/api';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 
 const { Item } = Form;
 
@@ -13,21 +13,21 @@ function CSSCustom() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await api.get(location.pathname);
-        setData(res.data);
-      }
-      catch (err) {
-        navigate('/error')
-      }
-      finally {
-        setLoading(false);
-      }
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(location.pathname);
+      setData(res.data);
     }
+    catch (err) {
+      navigate('/error')
+    }
+    finally {
+      setLoading(false);
+    }
+  }
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -35,15 +35,10 @@ function CSSCustom() {
     setLoading(true);
     await api.put(location.pathname, values)
       .then(res => {
-        console.log(res.data);
-        refreshPage();
-        setLoading(false);
+        fetchData();
+        message.success("Successfully updated.");
       })
       .catch(err => navigate('/error'));
-  }
-
-  const refreshPage = () => {
-    navigate(0);
   }
 
   const cancel = () => {

@@ -18,6 +18,63 @@ const MenuList = () => {
   const [switchLoading, setSwitchLoading] = useState(false);
   const [form] = Form.useForm();
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(location.pathname);
+      const data = res.data;
+
+      const temp = data.reduce((result, item, index) => {
+        const { id_lang, type, parent_id } = item;
+        const langKey = id_lang === 11 ? 'vietnam' : 'english';
+        const sectionKey = type === 1 ? 'top' : 'bottom';
+
+        const position = langKey + sectionKey;
+        const sectionItems = result[langKey][sectionKey];
+
+        if (parent_id) {
+          item.stt = "--";
+          // find correct position
+          const parentIndex = sectionItems.findIndex((item) => item.id === parent_id);
+          sectionItems.splice(parentIndex + 1, 0, item);
+        } else {
+          const lenKey = position;
+          if (!result[lenKey]) {
+            result[lenKey] = 0;
+          }
+          item.stt = ++result[lenKey];
+          sectionItems.push(item);
+          result.parent.push(item);
+        }
+
+        item.key = index;
+        //for easy table data display
+        item.language = id_lang === 11 ? "Tiếng Việt" : "Tiếng Anh"
+
+        return result;
+      }, {
+        vietnam: {
+          top: [],
+          bottom: [],
+        },
+        english: {
+          top: [],
+          bottom: [],
+        },
+        parent: []
+      });
+
+      setMenuData(temp);
+    }
+    catch (err) {
+      console.log(err);
+      navigate('/error');
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
   // Define the table columns...
   const columns = [
     { title: 'Stt', dataIndex: 'stt', key: 'stt', sorter: (a, b) => a.stt - b.stt },
@@ -42,7 +99,7 @@ const MenuList = () => {
               item.status = checked;
 
               setSwitchLoading(true);
-              await api.put(location.pathname, item).then(res => {
+              await api.patch(location.pathname, item).then(res => {
                 setMenuData(update);
                 setSwitchLoading(false);
               })
@@ -126,14 +183,12 @@ const MenuList = () => {
 
       setLoading(true);
       await api.post(location.pathname, data).then(res => {
-        console.log(res.data);
-        refreshPage();
+        setCreateMenu(false);
+        setDisable(false);
+        fetchData();
+        message.success('Successfully created.');
       })
         .catch(error => navigate('/error'));
-
-      setCreateMenu(false);
-      setDisable(false);
-      setLoading(false);
     }
   };
 
@@ -141,8 +196,8 @@ const MenuList = () => {
     const query = `?id=${record.id}`;
     setLoading(true);
     await api.delete(location.pathname + query).then(res => {
-      refreshPage();
-      setLoading(false);
+      fetchData();
+      message.success('Successfully deleted.');
     })
       .catch(err => navigate('/error'));
   }
@@ -153,68 +208,7 @@ const MenuList = () => {
     setDisable(false);
   }
 
-  const refreshPage = () => {
-    navigate(0);
-  }
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await api.get(location.pathname);
-        const data = res.data;
-
-        const temp = data.reduce((result, item, index) => {
-          const { id_lang, type, parent_id } = item;
-          const langKey = id_lang === 11 ? 'vietnam' : 'english';
-          const sectionKey = type === 1 ? 'top' : 'bottom';
-
-          const position = langKey + sectionKey;
-          const sectionItems = result[langKey][sectionKey];
-
-          if (parent_id) {
-            item.stt = "--";
-            // find correct position
-            const parentIndex = sectionItems.findIndex((item) => item.id === parent_id);
-            sectionItems.splice(parentIndex + 1, 0, item);
-          } else {
-            const lenKey = position;
-            if (!result[lenKey]) {
-              result[lenKey] = 0;
-            }
-            item.stt = ++result[lenKey];
-            sectionItems.push(item);
-            result.parent.push(item);
-          }
-
-          item.key = index;
-          //for easy table data display
-          item.language = id_lang === 11 ? "Tiếng Việt" : "Tiếng Anh"
-
-          return result;
-        }, {
-          vietnam: {
-            top: [],
-            bottom: [],
-          },
-          english: {
-            top: [],
-            bottom: [],
-          },
-          parent: []
-        });
-
-        setMenuData(temp);
-      }
-      catch (err) {
-        console.log(err);
-        navigate('/error');
-      }
-      finally {
-        setLoading(false);
-      }
-    }
-
     fetchData();
   }, [])
 

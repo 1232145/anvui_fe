@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../../components/Api/api";
 import Loading from "../../components/Loading";
-import { Table, Input, Select, Row, Col, Button, Popconfirm } from 'antd';
+import { Table, Input, Select, Row, Col, Button, Popconfirm, message } from 'antd';
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 const { Option } = Select;
 
@@ -14,6 +14,23 @@ const Page = () => {
     const [pageSize, setPageSize] = useState(10);
     const [searchText, setSearchText] = useState('');
     const [filteredData, setfilteredData] = useState(data);
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const res = await api.get(location.pathname);
+            const pages = res.data.map((item, index) => ({ ...item, stt: index + 1, key: index }));
+            setData(pages);
+            setfilteredData(pages);
+        }
+        catch (err) {
+            navigate('/error');
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
     const columns = [
         {
             title: 'Stt',
@@ -41,9 +58,8 @@ const Page = () => {
                     const query = `?id=${item.id}`;
                     setLoading(true);
                     await api.delete(location.pathname + query).then(res => {
-                        console.log(res.data);
-                        refreshPage();
-                        setLoading(false);
+                        fetchData();
+                        message.success("Successfully deleted.");
                     })
                         .catch(err => navigate('/error'));
                 }
@@ -92,27 +108,7 @@ const Page = () => {
         navigate(location.pathname + '/create-page');
     };
 
-    const refreshPage = () => {
-        navigate(0);
-    }
-
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const res = await api.get(location.pathname);
-                const pages = res.data.map((item, index) => ({ ...item, stt: index + 1, key: index }));
-                setData(pages);
-                setfilteredData(pages);
-            }
-            catch (err) {
-                navigate('/error');
-            }
-            finally {
-                setLoading(false);
-            }
-        }
-
         fetchData();
     }, [])
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { api } from '../../components/Api/api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading';
-import { Alert, Form, Input, Space, Button } from 'antd';
+import { Alert, Form, Input, Space, Button, message } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 function Domain() {
@@ -45,19 +45,14 @@ function Domain() {
   }, [])
 
   const onFinish = async (values) => {
-    const out = {domain: processData(values.domain, "out")};
+    const out = { domain: processData(values.domain, "out") };
     setLoading(true);
     await api.put(location.pathname, out)
-    .then(res => {
-      console.log(res.data);
-      refreshPage();
-      setLoading(false);
-    })
-    .catch(err => console.log(err));
-  }
-
-  const refreshPage = () => {
-    navigate(0);
+      .then(res => {
+        fetchData();
+        message.success("Successfully updated.");
+      })
+      .catch(err => console.log(err));
   }
 
   const cancel = () => {

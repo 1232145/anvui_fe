@@ -103,14 +103,6 @@ function Home() {
     return data;
   }
 
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Adding 1 to month as it is zero-based
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${year}/${month}/${day}`;
-  }
-
   const handleFileUpload = async (file, type) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
@@ -156,6 +148,7 @@ function Home() {
       .then(res => {
         refreshPage();
         setLoading(false);
+        message.success("Successfully updated.")
       })
       .catch(err => navigate('/error'));
   };
