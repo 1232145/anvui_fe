@@ -35,13 +35,19 @@ const MenuList = () => {
         if (parent_id) {
           item.stt = "--";
           // find correct position
-          const parentIndex = sectionItems.findIndex((item) => item.id === parent_id);
+          const parentIndex = data.findIndex((item) => item.id === parent_id);
           sectionItems.splice(parentIndex + 1, 0, item);
-        } else {
+
+          //for display which to change menu (only menus without children)
+          result.dependent = result.dependent.filter(item => item.id !== parent_id);
+        }
+        else {
           const lenKey = position;
+
           if (!result[lenKey]) {
             result[lenKey] = 0;
           }
+
           item.stt = ++result[lenKey];
           sectionItems.push(item);
           result.parent.push(item);
@@ -61,7 +67,8 @@ const MenuList = () => {
           top: [],
           bottom: [],
         },
-        parent: []
+        parent: [],
+        dependent: data,
       });
 
       setMenuData(temp);
@@ -138,6 +145,7 @@ const MenuList = () => {
     },
   ];
 
+  //disable language and position option if is child of one menu
   const handleParentIdChange = (value) => {
     if (value === 0) {
       setDisable(false);
@@ -186,7 +194,7 @@ const MenuList = () => {
         setCreateMenu(false);
         setDisable(false);
         fetchData();
-        message.success('Successfully created.');
+        message.success('Successfully updated.');
       })
         .catch(error => navigate('/error'));
     }
@@ -212,6 +220,28 @@ const MenuList = () => {
     fetchData();
   }, [])
 
+  const getTable = (lang, menuTopData, menuBotData) => {
+    return (
+      <>
+        <Row gutter={[16, 16]}><h2 style={{ marginBottom: '16px' }}>{lang}</h2></Row>
+        <Row gutter={[16, 16]} xs={1} sm={2} md={2} lg={2}>
+          <Col span={12}>
+            <div>
+              <h3>Menu trên</h3>
+              <Table dataSource={menuTopData} columns={columns} pagination={false} />
+            </div>
+          </Col>
+          <Col span={12}>
+            <div>
+              <h3>Menu dưới</h3>
+              <Table dataSource={menuBotData} columns={columns} pagination={false} />
+            </div>
+          </Col>
+        </Row>
+      </>
+    )
+  }
+
   return (
     <>
       {
@@ -225,41 +255,12 @@ const MenuList = () => {
                 Create Menu
               </Button>
             </div>
-            <Row gutter={[16, 16]}><h2 style={{ marginBottom: '16px' }}>Tiếng Việt</h2></Row>
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
-                <div>
-                  <h3>Menu trên</h3>
-                  {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.vietnam?.top} columns={columns} pagination={false} />
-                </div>
-              </Col>
-              <Col span={12}>
-                <div>
-                  <h3>Menu dưới</h3>
-                  {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.vietnam?.bottom} columns={columns} pagination={false} />
-                </div>
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]}><h2 style={{ marginBottom: '16px' }}>Tiếng Anh</h2></Row>
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
-                <div>
-                  <h3>Menu trên</h3>
-                  {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.english?.top} columns={columns} pagination={false} />
-                </div>
-              </Col>
-              <Col span={12}>
-                <div>
-                  <h3>Menu dưới</h3>
-                  {/* Use Ant Design Table component to display menu data */}
-                  <Table dataSource={menuData.english?.bottom} columns={columns} pagination={false} />
-                </div>
-              </Col>
-            </Row>
-            {/* Modal for creating a new menu */}
+            {
+              getTable('Tiếng Việt', menuData.vietnam?.top, menuData.vietnam?.bottom)
+            }
+            {
+              getTable('Tiếng Anh', menuData.english?.top, menuData.english?.bottom)
+            }
             <Modal
               title="Create Menu"
               open={createMenu}
@@ -301,18 +302,23 @@ const MenuList = () => {
                   <Switch />
                 </Item>
                 {
-                  !menuData.parent?.some(item => item.namemenu === form.getFieldValue("namemenu")) &&
+                  menuData.dependent?.some(item => item.namemenu === form.getFieldValue("namemenu")) &&
                   (
                     <Item name="parent_id" label="Menu cha" initialValue={0}>
                       <Select onChange={handleParentIdChange}>
                         <Option value={0}>Menu cha</Option>
                         {
                           menuData.parent?.map(item => {
-                            const position = item.type === 1 ? "Menu trên" : "Menu dưới";
+                            if (item.namemenu !== form.getFieldValue('namemenu')) {
+                              const position = item.type === 1 ? "Menu trên" : "Menu dưới";
 
-                            return (
-                              <Option key={item.id} value={item.id}>{item.namemenu}-{position}</Option>
-                            )
+                              return (
+                                <Option key={item.id} value={item.id}>{item.namemenu}-{position}</Option>
+                              )
+                            }
+                            else {
+                              return null;
+                            }
                           })
                         }
                       </Select>
@@ -326,7 +332,7 @@ const MenuList = () => {
                   </Select>
                 </Item>
                 <Item name="sort" label="Sắp xếp">
-                  <InputNumber />
+                  <InputNumber min={0} />
                 </Item>
               </Form>
             </Modal>
