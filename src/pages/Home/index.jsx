@@ -38,14 +38,6 @@ const imgOptions = [
 
 //const host = 'https://cdn.anvui.vn/';
 
-/*
-Back up:
-img: upload/web/2022/08/29/1661740619_blue.png.png
-icon: upload/web/2022/05/29/1653836231_2022_05_16_07_52_img_3180.jpg.JPG
-logo_bottom: upload/web/2022/06/10/1654854949_hoa-huong-duong_112958596-1.jpg.jpg
-default_facebook_img: upload/web/2022/09/15/1663225385_screen-shot-2022-06-12-at-10.21.01.png.png
-*/
-
 function Home() {
   const [data, setData] = useState({});
   const [imageHolder, setImageHolder] = useState({});
