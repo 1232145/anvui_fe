@@ -36,19 +36,18 @@ const MenuList = () => {
           item.stt = "--";
           // find correct position
           const parentIndex = data.findIndex((item) => item.id === parent_id);
-          sectionItems.splice(parentIndex + 1, 0, item);
 
           //for display which to change menu (only menus without children)
-          result.dependent = result.dependent.filter(item => item.id !== parent_id);
+          result.exclude.push(data[parentIndex]);
+
+          sectionItems.splice(parentIndex + 1, 0, item);
         }
         else {
-          const lenKey = position;
-
-          if (!result[lenKey]) {
-            result[lenKey] = 0;
+          if (!result[position]) {
+            result[position] = 0;
           }
 
-          item.stt = ++result[lenKey];
+          item.stt = ++result[position];
           sectionItems.push(item);
           result.parent.push(item);
         }
@@ -68,7 +67,7 @@ const MenuList = () => {
           bottom: [],
         },
         parent: [],
-        dependent: data,
+        exclude: [],
       });
 
       setMenuData(temp);
@@ -302,7 +301,7 @@ const MenuList = () => {
                   <Switch />
                 </Item>
                 {
-                  menuData.dependent?.some(item => item.namemenu === form.getFieldValue("namemenu")) &&
+                  !menuData.exclude?.some(item => item.namemenu === form.getFieldValue("namemenu")) &&
                   (
                     <Item name="parent_id" label="Menu cha" initialValue={0}>
                       <Select onChange={handleParentIdChange}>
