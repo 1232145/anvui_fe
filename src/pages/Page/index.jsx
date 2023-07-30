@@ -99,7 +99,7 @@ const Page = () => {
         const filteredData = data.filter(
             (item) =>
                 item.title.toLowerCase().includes(value.toLowerCase()) ||
-                String(item.id).toLowerCase().includes(value.toLowerCase())
+                String(item.stt).toLowerCase().includes(value.toLowerCase())
         );
         setfilteredData(filteredData);
     };
