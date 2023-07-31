@@ -12,7 +12,7 @@ const ErrorPage = () => {
         subTitle="Sorry, something went wrong."
         extra={
           <Button type="primary">
-          <Link to="/">Back Home</Link>
+          <Link to="/home">Back Home</Link>
         </Button>
         }
       />

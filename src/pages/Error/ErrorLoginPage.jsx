@@ -10,7 +10,7 @@ const ErrorLogin = ({msg, setError}) => {
         title="Đăng nhập thất bại"
         subTitle={msg}
         extra={
-          <Link to="/">
+          <Link to="/home">
             <Button type="primary" onClick={() => setError(false)}>Quay về</Button>
           </Link>
         }

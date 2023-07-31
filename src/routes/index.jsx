@@ -16,7 +16,7 @@ import ErrorPage from '../pages/Error/ErrorPage';
 import CreatePage from "../pages/Page/CreatePage";
 
 export const publicRoutes = [
-    { path: '/', name: "Trang chủ", icon: <HomeOutlined />, component: Home },
+    { path: '/home', name: "Trang chủ", icon: <HomeOutlined />, component: Home },
     { path: '/news/create-news', name: "Thêm tin tức", component: CreateNews },
     { path: '/news/news-list', name: "Danh sách tin tức", component: NewsList },
     { path: '/news/create-news-catagory', name: "Thêm danh mục tin tức", component: CreateNewsCatagory },
@@ -34,7 +34,7 @@ export const publicRoutes = [
 ]
 
 export const navRoutes = [
-    { path: '/', component: Home, name: "Trang chủ", icon: <HomeOutlined /> },
+    { path: '/home', component: Home, name: "Trang chủ", icon: <HomeOutlined /> },
     {
         path: null, name: "Tin Tức", icon: <FileOutlined />, children: [
             { path: '/news/create-news', name: "Thêm tin tức", component: CreateNews },

@@ -1,30 +1,77 @@
-import React, { useState } from 'react';
-import { Form, Input, Switch, Select, Button, Row, Col, Collapse, Upload, Image, message } from 'antd';
-import 'react-quill/dist/quill.snow.css';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Switch, Select, Button, Row, Col, Collapse, Upload, Image, message, Checkbox } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
-import QuillForm from '../../utility/QuillForm';
+import CKEditorForm from '../../utility/CKEditorForm';
 import { PlusOutlined } from '@ant-design/icons';
+import { api } from '../../components/Api/api';
 import Loading from '../../components/Loading';
 
 const { Option } = Select;
 const { Item } = Form;
 const { Panel } = Collapse;
+const host = 'https://cdn.anvui.vn/';
 
 function CreateNews() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
-  const [quillData, setQuillData] = useState("");
-  const [imageHolder, setImageHolder] = useState({});
+  const [areaData, setAreaData] = useState("");
+  const [imageHolder, setImageHolder] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get('id');
+  const url = location.pathname + `?id=${id}`;
 
-  const onFinish = (values) => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(url);
+      const category = await api.get('/news/news-category');
+
+      let procData = res.data;
+      const cat_ids = procData.cat_id.split('|').filter(item => item !== "").map(Number);
+
+      procData.cat_id = category.data.map(item => ({
+        title: item.title,
+        checked: cat_ids.find(id => id === item.id) ? true : false,
+        id: item.id
+      }));
+
+      const date = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN');
+      procData.create_time = date;
+
+      setImageHolder(host + procData.img);
+      setAreaData(procData.details);
+      setData(procData);
+    }
+    catch (err) {
+      console.log(err);
+      navigate('/error');
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (id) {
+      fetchData();
+    }
+  }, [])
+
+  const onFinish = async (values) => {
     console.log('Form values:', values);
   };
 
-  const handleQuillChange = (e) => {
-    setQuillData(e);
+  const handleAreaData = (e) => {
+    setAreaData(e);
+  }
+
+  const handleCatId = (id, checked) => {
+    let update = { ...data };
+    update.cat_id.find(item => item.id === id).checked = checked;
+    setData(update);
   }
 
   const handleFileUpload = async (file) => {
@@ -56,6 +103,7 @@ function CreateNews() {
               name='dynamic_form_nest_item'
               onFinish={onFinish}
               form={form}
+              initialValues={data}
             >
               <Row gutter={20}>
                 <Col xs={24} md={16}>
@@ -80,7 +128,7 @@ function CreateNews() {
                     name="details"
                     rules={[{ required: true, message: 'Vui lòng nhập thông tin' }]}
                   >
-                    <QuillForm data={quillData} handleChange={handleQuillChange} />
+                    <CKEditorForm data={areaData} handleChange={handleAreaData} />
                   </Item>
 
                   <Item style={{ marginTop: '10px' }}>
@@ -128,8 +176,17 @@ function CreateNews() {
                         </Select>
                       </Item>
 
-                      <Item label="Danh mục">
-
+                      <Item label="Danh mục" name="cat_id">
+                        <div style={{ border: '1px solid #d9d9d9', borderRadius: 4, padding: 8 }}>
+                          {data.cat_id?.map((item, index) => (
+                            <Checkbox
+                              key={index}
+                              checked={item.checked}
+                              onChange={(e) => handleCatId(item.id, e.target.checked)}>
+                              {item.title}
+                            </Checkbox>
+                          ))}
+                        </div>
                       </Item>
 
                       <Item label="Ảnh" name="img">
@@ -138,7 +195,15 @@ function CreateNews() {
                           showUploadList={false}
                           style={{ width: '75%' }}
                         >
-                          <PlusOutlined />
+                          {
+                            imageHolder ? (
+                              <Image src={imageHolder} alt="" />
+                            )
+                              :
+                              (
+                                <PlusOutlined />
+                              )
+                          }
                         </Upload.Dragger>
                       </Item>
                     </Panel>

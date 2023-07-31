@@ -39,6 +39,10 @@ function NewsList() {
     fetchData();
   }, [])
 
+  const handleEditNews = (record) => {
+    navigate(`/news/create-news?id=${record.id}`);
+  }
+
   const handleDeleteNews = async (record) => {
     const query = `?id=${record.id}`;
     setLoading(true);
@@ -109,7 +113,7 @@ function NewsList() {
             ghost
             size="small"
             icon={<EditOutlined />}
-            onClick={() => console.log("Edit")}
+            onClick={() => handleEditNews(record)}
           />
           <Popconfirm
             title="Bạn chắc chắn muốn xóa tin này?"

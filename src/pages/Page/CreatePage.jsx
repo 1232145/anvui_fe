@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../../components/Api/api'
 import Loading from '../../components/Loading'
 import { Form, Input, Button, message } from 'antd';
-import QuillForm from '../../utility/QuillForm';
+import CKEditorForm from '../../utility/CKEditorForm';
 
 const { Item } = Form;
 const specialCharacters = {
@@ -165,7 +165,7 @@ const CreatePage = () => {
                                     </div>
                                 </Item>
                                 <Item>
-                                    <QuillForm
+                                    <CKEditorForm
                                         data={data?.content}
                                         handleChange={value => setData({ ...data, content: value })}
                                     />

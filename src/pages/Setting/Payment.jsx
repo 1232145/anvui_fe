@@ -4,9 +4,8 @@ import Loading from '../../components/Loading';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import './payment.css';
 import { api } from '../../components/Api/api';
-import 'react-quill/dist/quill.snow.css';
 import { useNavigate, useLocation } from 'react-router-dom';
-import QuillForm from '../../utility/QuillForm';
+import CKEditorForm from '../../utility/CKEditorForm';
 
 const { Item } = Form;
 
@@ -14,7 +13,7 @@ function Payment() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
-  const [quillData, setQuillData] = useState("");
+  const [areaData, setAreaData] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,7 +39,7 @@ function Payment() {
       const res = await api.get(location.pathname);
       const processedData = processDataIn(res.data);
       setData(processedData);
-      setQuillData(processedData.paymentNote);
+      setAreaData(processedData.paymentNote);
     }
     catch (err) {
       console.log(err);
@@ -69,7 +68,7 @@ function Payment() {
     })
 
     params.payments_method = JSON.stringify(array);
-    params.paymentNote = quillData;
+    params.paymentNote = areaData;
 
     setLoading(true);
     await api.put(location.pathname, params).then(res => {
@@ -88,8 +87,8 @@ function Payment() {
     setData({ ...data, paymentCK: value })
   }
 
-  const handleQuillChange = (e) => {
-    setQuillData(e);
+  const handleAreaData = (e) => {
+    setAreaData(e);
   }
 
   return (
@@ -174,7 +173,7 @@ function Payment() {
               </Item>
 
               <Item label="Lưu ý khi đặt vé ">
-                <QuillForm data={quillData} handleChange={handleQuillChange} />
+                <CKEditorForm data={areaData} handleChange={handleAreaData} />
               </Item>
 
               <Item style={{ marginLeft: '45.5%' }}>
