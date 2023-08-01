@@ -27,6 +27,7 @@ const Login = ({ setLogin }) => {
       }
       else {
         localStorage.setItem('accessToken', data.access_token);
+        localStorage.setItem('username', data.username);
         setLogin(true);
         navigate('/home');
       }
