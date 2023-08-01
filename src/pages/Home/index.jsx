@@ -129,7 +129,7 @@ function Home() {
     });
 
     setLoading(true);
-    await api.put('/upload-file', formData, {
+    await api.put('/home/upload-file', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -140,9 +140,12 @@ function Home() {
       .then(res => {
         refreshPage();
         setLoading(false);
-        message.success("Successfully updated.")
+        message.success(res.data.msg);
       })
-      .catch(err => navigate('/error'));
+      .catch(err => {
+        navigate('/error');
+        message.error(err.response.data.err);
+      });
   };
 
   const refreshPage = () => {

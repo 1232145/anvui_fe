@@ -1,4 +1,4 @@
-import { Form, Checkbox, Button, Input, Space } from 'antd';
+import { Form, Checkbox, Button, Input, Space, message } from 'antd';
 import React, { useState, useEffect } from 'react';
 import Loading from '../../components/Loading';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -73,8 +73,12 @@ function Payment() {
     setLoading(true);
     await api.put(location.pathname, params).then(res => {
       fetchData();
+      message.success(res.data.msg);
     })
-      .catch(err => navigate('/error'));
+      .catch(err => {
+        navigate('/error');
+        message.error(err.response.data.err);
+      });
   }
 
   const cancel = () => {

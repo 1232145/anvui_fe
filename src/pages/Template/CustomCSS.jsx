@@ -36,9 +36,12 @@ function CSSCustom() {
     await api.put(location.pathname, values)
       .then(res => {
         fetchData();
-        message.success("Successfully updated.");
+        message.success(res.data.msg);
       })
-      .catch(err => navigate('/error'));
+      .catch(err => {
+        navigate('/error');
+        message.error(err.response.data.err);
+      });
   }
 
   const cancel = () => {

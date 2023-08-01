@@ -50,9 +50,12 @@ function Domain() {
     await api.put(location.pathname, out)
       .then(res => {
         fetchData();
-        message.success("Successfully updated.");
+        message.success(res.data.msg);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        navigate('/error');
+        message.error(err.response.data.err);
+      });
   }
 
   const cancel = () => {

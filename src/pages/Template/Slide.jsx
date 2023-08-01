@@ -106,9 +106,12 @@ const Slide = () => {
     await api.delete(`${location.pathname}/${folder}/${item.id}/${item.create_time}`)
       .then(res => {
         fetchData();
-        message.success('Image deleted successfully.');
+        message.success(res.data.msg);
       })
-      .catch(err => navigate('/error'));
+      .catch(err => {
+        navigate('/error')
+        message.error(err.response.data.err);
+      });
   };
 
   const getUploadProps = (name, slide_id) => {

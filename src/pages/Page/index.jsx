@@ -59,9 +59,12 @@ const Page = () => {
                     setLoading(true);
                     await api.delete(location.pathname + query).then(res => {
                         fetchData();
-                        message.success("Successfully deleted.");
+                        message.success(res.data.msg);
                     })
-                        .catch(err => navigate('/error'));
+                        .catch(err => {
+                            navigate('/error');
+                            message.error(err.response.data.err);
+                        });
                 }
 
                 return (

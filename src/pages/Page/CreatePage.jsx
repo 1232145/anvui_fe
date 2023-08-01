@@ -131,9 +131,12 @@ const CreatePage = () => {
             setLoading(true);
             await api.post(url, out).then(res => {
                 setLoading(false);
-                message.success("Successfully created.");
+                message.success(res.data.msg);
                 navigate('/page');
-            }).catch(err => navigate('/error'));
+            }).catch(err => {
+                navigate('/error');
+                message.error(err.response.data.err);
+            });
         }
     }
 

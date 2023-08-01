@@ -193,9 +193,12 @@ const MenuList = () => {
         setCreateMenu(false);
         setDisable(false);
         fetchData();
-        message.success('Successfully updated.');
+        message.success(res.data.msg);
       })
-        .catch(error => navigate('/error'));
+        .catch(error => {
+          navigate('/error');
+          message.error(error.response.data.err);
+        });
     }
   };
 
