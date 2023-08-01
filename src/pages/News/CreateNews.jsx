@@ -12,11 +12,14 @@ const { Panel } = Collapse;
 const host = 'https://cdn.anvui.vn/';
 
 function CreateNews() {
+  //data handler
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
   const [areaData, setAreaData] = useState("");
   const [imageHolder, setImageHolder] = useState(null);
+
+  //path handler
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -60,10 +63,6 @@ function CreateNews() {
     }
   }, [])
 
-  const onFinish = async (values) => {
-    console.log('Form values:', values);
-  };
-
   const handleAreaData = (e) => {
     setAreaData(e);
   }
@@ -86,7 +85,23 @@ function CreateNews() {
       return false;
     }
 
+    setImageHolder(URL.createObjectURL(file));
+
     return false; // Prevent default upload behavior
+  };
+
+  const onFinish = async (values) => {
+    const checkedIds = data.cat_id.reduce((acc, item) => {
+      if (item.checked) {
+        acc.push(item.id);
+      }
+      return acc;
+    }, []);
+    
+    const convertedCatId = checkedIds.length > 0 ? '|' + checkedIds.join('|') + '|' : '||';
+
+    values.cat_id = convertedCatId;
+    console.log('Form values:', values);
   };
 
   return (
@@ -197,7 +212,7 @@ function CreateNews() {
                         >
                           {
                             imageHolder ? (
-                              <Image src={imageHolder} alt="" />
+                              <Image src={imageHolder} alt="" preview={false}/>
                             )
                               :
                               (
