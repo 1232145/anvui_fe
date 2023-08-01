@@ -127,9 +127,8 @@ const CreatePage = () => {
             message.error('Tiêu đề dài hơn 6 kí tự.');
         }
         else {
-            const out = {...data, id: id};
             setLoading(true);
-            await api.post(url, out).then(res => {
+            await api.post(id ? url : location.pathname, data).then(res => {
                 setLoading(false);
                 message.success(res.data.msg);
                 navigate('/page');

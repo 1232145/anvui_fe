@@ -26,30 +26,18 @@ function CreateNews() {
   const id = queryParams.get('id');
   const url = location.pathname + `?id=${id}`;
 
-  const fetchData = async () => {
+  const getCatIds = async (catIds) => {
     try {
       setLoading(true);
-      const res = await api.get(url);
       const category = await api.get('/news/news-category');
 
-      let procData = res.data;
-      const cat_ids = procData.cat_id.split('|').filter(item => item !== "").map(Number);
-
-      procData.cat_id = category.data.map(item => ({
+      return category.data.map(item => ({
         title: item.title,
-        checked: cat_ids.find(id => id === item.id) ? true : false,
+        checked: catIds ? (catIds.find(id => id === item.id) ? true : false) : false,
         id: item.id
-      }));
-
-      const date = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN');
-      procData.create_time = date;
-
-      setImageHolder(host + procData.img);
-      setAreaData(procData.details);
-      setData(procData);
+      }))
     }
     catch (err) {
-      console.log(err);
       navigate('/error');
     }
     finally {
@@ -57,11 +45,60 @@ function CreateNews() {
     }
   }
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(url);
+
+      let procData = res.data;
+      const catIds = procData.cat_id.split('|').filter(item => item !== "").map(Number);
+
+      procData.cat_id = await getCatIds(catIds);
+
+      procData.create_time = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN')
+
+      setImageHolder(host + procData.img);
+      setAreaData(procData.details);
+      setData(procData);
+    }
+    catch (err) {
+      navigate('/error');
+      message.error(err.response.data.err);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
+  const reset = async () => {
+    const initialFormData = {
+      title: '',
+      short: '',
+      details: '',
+      create_time: new Date().toLocaleDateString('vi-VN'),
+      status: false,
+      id_lang: 11,
+      cat_id: await getCatIds(),
+      meta_title: '',
+      meta_keyword: '',
+      meta_description: '',
+      img: null,
+    };
+
+    setAreaData("");
+    setImageHolder(null);
+    setData(initialFormData);
+    form.setFieldsValue(initialFormData);
+  }
+
   useEffect(() => {
     if (id) {
       fetchData();
     }
-  }, [])
+    else {
+      reset();
+    }
+  }, [id])
 
   const handleAreaData = (e) => {
     setAreaData(e);
@@ -97,11 +134,25 @@ function CreateNews() {
       }
       return acc;
     }, []);
-    
+
     const convertedCatId = checkedIds.length > 0 ? '|' + checkedIds.join('|') + '|' : '||';
 
     values.cat_id = convertedCatId;
-    console.log('Form values:', values);
+
+    const [day, month, year] = data.create_time.split('/');
+    const dateObject = new Date(`${year}-${month}-${day}`);
+    values.create_time = Math.floor(dateObject.getTime() / 1000);
+
+    setLoading(true);
+    await api.post(id ? url : location.pathname, values).then(res => {
+      setLoading(false);
+      message.success(res.data.msg);
+      navigate('/news/news-list');
+    })
+    .catch(err => {
+      navigate('/error');
+      message.error(err.response.data.err);
+    })
   };
 
   return (
@@ -133,7 +184,6 @@ function CreateNews() {
                   <Item
                     label="Mô tả"
                     name="short"
-                    rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
                   >
                     <Input.TextArea rows={5} />
                   </Item>
@@ -141,7 +191,6 @@ function CreateNews() {
                   <Item
                     label="Nội dung"
                     name="details"
-                    rules={[{ required: true, message: 'Vui lòng nhập thông tin' }]}
                   >
                     <CKEditorForm data={areaData} handleChange={handleAreaData} />
                   </Item>
@@ -175,7 +224,6 @@ function CreateNews() {
                       <Item
                         name="create_time"
                         label="Ngày đăng"
-                        initialValue={new Date().toLocaleDateString('vi-VN')}
                       >
                         <Input disabled />
                       </Item>
@@ -184,7 +232,7 @@ function CreateNews() {
                         <Switch />
                       </Item>
 
-                      <Item label="Ngôn ngữ" name="id_lang" initialValue={11}>
+                      <Item label="Ngôn ngữ" name="id_lang">
                         <Select>
                           <Option value={11}>Tiếng Việt</Option>
                           <Option value={12}>English</Option>
@@ -212,7 +260,7 @@ function CreateNews() {
                         >
                           {
                             imageHolder ? (
-                              <Image src={imageHolder} alt="" preview={false}/>
+                              <Image src={imageHolder} alt="" preview={false} />
                             )
                               :
                               (

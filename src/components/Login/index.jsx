@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Typography } from 'antd';
+import { Form, Input, Button, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { api } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +29,7 @@ const Login = ({ setLogin }) => {
         localStorage.setItem('accessToken', data.access_token);
         localStorage.setItem('username', data.username);
         setLogin(true);
+        message.success("Đăng nhập thành công");
         navigate('/home');
       }
     }
