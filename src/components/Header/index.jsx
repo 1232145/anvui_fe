@@ -4,6 +4,7 @@ import './header.css';
 import { MenuOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Header } = Layout;
+const userImage = 'https://www.kindpng.com/picc/m/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png';
 
 const MyHeader = ({ menuCollapsed, setMenuCollapsed }) => {
 
@@ -22,7 +23,7 @@ const MyHeader = ({ menuCollapsed, setMenuCollapsed }) => {
   return (
     <div>
       <Header className='header'>
-        <div className='nav-button'>
+        <div className={`nav-button ${menuCollapsed && 'collapsed'}`}>
           <div>
           <Button type="default" onClick={() => setMenuCollapsed(!menuCollapsed)} icon={<MenuOutlined />} />
           </div>
