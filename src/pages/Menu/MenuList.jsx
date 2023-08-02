@@ -104,19 +104,20 @@ const MenuList = () => {
 
               const lang = record.id_lang === 11 ? 'vietnam' : 'english';
               const position = record.type === 1 ? 'top' : 'bottom';
+              const { parent_id, id } = record;
               
               let item = null;
               let menu = update[lang][position];
 
-              if (record.parent_id !== 0) {
-                let parent = menu.find(item => item.id === record.parent_id);
-                item = parent.children.find(item => item.id === record.id);
-                item.status = checked;  
+              if (parent_id !== 0) {
+                let parent = menu.find(item => item.id === parent_id);
+                item = parent.children.find(item => item.id === id);
               }
               else {
-                item = menu.find(item => item.id === record.id);
-                item.status = checked;
+                item = menu.find(item => item.id === id);
               }
+
+              item.status = checked;  
               
               setSwitchLoading(true);
               await api.patch(location.pathname, item).then(res => {
