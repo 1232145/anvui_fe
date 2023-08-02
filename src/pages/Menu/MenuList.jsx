@@ -32,15 +32,18 @@ const MenuList = () => {
         const position = langKey + sectionKey;
         const sectionItems = result[langKey][sectionKey];
 
-        if (parent_id) {
-          item.stt = "--";
-          // find correct position
-          const parentIndex = data.findIndex((item) => item.id === parent_id);
+        if (parent_id !== 0) {
+          item.stt = "-";
+          const parent = data.find((item) => item.id === parent_id);
 
           //for display which to change menu (only menus without children)
-          result.exclude.push(data[parentIndex]);
+          result.exclude.push(parent);
 
-          sectionItems.splice(parentIndex + 1, 0, item);
+          if (!parent.children) {
+            parent.children = [];
+          }
+
+          parent.children.push(item);
         }
         else {
           if (!result[position]) {
@@ -49,6 +52,7 @@ const MenuList = () => {
 
           item.stt = ++result[position];
           sectionItems.push(item);
+          //menu cha
           result.parent.push(item);
         }
 
@@ -100,10 +104,20 @@ const MenuList = () => {
 
               const lang = record.id_lang === 11 ? 'vietnam' : 'english';
               const position = record.type === 1 ? 'top' : 'bottom';
+              
+              let item = null;
+              let menu = update[lang][position];
 
-              let item = update[lang][position].find(item => item.id === record.id);
-              item.status = checked;
-
+              if (record.parent_id !== 0) {
+                let parent = menu.find(item => item.id === record.parent_id);
+                item = parent.children.find(item => item.id === record.id);
+                item.status = checked;  
+              }
+              else {
+                item = menu.find(item => item.id === record.id);
+                item.status = checked;
+              }
+              
               setSwitchLoading(true);
               await api.patch(location.pathname, item).then(res => {
                 setMenuData(update);
