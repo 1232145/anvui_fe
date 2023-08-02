@@ -56,9 +56,13 @@ function NewsCategory() {
     fetchData();
   }, [])
 
+  const handleEdit = (record) => {
+    navigate(`/news/create-news-category?id=${record.id}`);
+  }
+
   const handleDelete = async (record) => {
     setLoading(true);
-    await api.delete(location.pathname + `?id=${record.id}`).then(res => {
+    await api.delete(`${location.pathname}?id=${record.id}`).then(res => {
       fetchData();
       message.success(res.data.msg);
     })
@@ -126,7 +130,7 @@ function NewsCategory() {
             ghost
             size="small"
             icon={<EditOutlined />}
-            onClick={() => console.log(record)}
+            onClick={() => handleEdit(record)}
           />
           <Popconfirm
             title="Bạn chắc chắn muốn xóa. Các danh mục con của sanh mục này cũng sẽ bị xóa !"
