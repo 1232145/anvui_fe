@@ -5,6 +5,7 @@ import { Form, Input, Button, Checkbox, Space, Select, Row, Col, Upload, message
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { convertFormData } from '../../tools';
 
 const { Option } = Select;
 const { Item } = Form;
@@ -53,6 +54,7 @@ function Home() {
       const procData = processData(res.data, "in");
 
       setData(procData);
+      form.setFieldsValue(procData);
       resetImageHolder(procData);
     }
     catch (err) {
@@ -118,8 +120,12 @@ function Home() {
   }, [])
 
   const onFinish = async (values) => {
-    const formData = new FormData();
+    //process data
+    const procData = processData(values, "out");
+    //create formData for file attachment
+    const formData = convertFormData(procData);
 
+    //attach files
     imgOptions.forEach(item => {
       if (typeof values[item] === 'object') {
         const { file, name } = values[item];
@@ -129,17 +135,14 @@ function Home() {
     });
 
     setLoading(true);
-    await api.put('/home/upload-file', formData, {
+    await api.put(location.pathname, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-    }).then(res => {
-      res.data.forEach(item => values[item.name] = item.url);
-    });
-    await api.put(location.pathname, processData(values, "out"))
+    })
       .then(res => {
-        refreshPage();
-        setLoading(false);
+        window.scrollTo(0, 0);
+        fetchData();
         message.success(res.data.msg);
       })
       .catch(err => {
@@ -147,11 +150,6 @@ function Home() {
         message.error(err.response.data.err);
       });
   };
-
-  const refreshPage = () => {
-    // navigate(0);
-    window.scrollTo(0, 0);
-  }
 
   const cancel = () => {
     form.resetFields();
