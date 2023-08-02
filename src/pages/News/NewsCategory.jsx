@@ -16,10 +16,35 @@ function NewsCategory() {
     try {
       setLoading(true);
       const res = await api.get(location.pathname);
-      setData(res.data);
+      const resData = res.data;
+
+      const procData = resData.reduce((result, item, index) => {
+        const { parent_id } = item;
+        item.key = index;
+
+        if (parent_id !== 0) {
+          item.stt = "-";
+
+          const parent = resData.find(item => item.id === parent_id);
+
+          if (!parent.children) {
+            parent.children = [];
+          }
+
+          parent.children.push(item);
+        }
+        else {
+          result.push(item);
+          item.stt = result.length;
+        }
+
+        return result;
+      }, []);
+
+      setData(procData);
     }
     catch (err) {
-      message.error(err.response.data.err);
+      console.log(err);
       navigate('/error');
     }
     finally {
@@ -45,7 +70,26 @@ function NewsCategory() {
             checked={record.status}
             loading={switchLoading}
             onChange={async (checked) => {
-              console.log(checked);
+              const { parent_id, id } = record;
+              let update = [...data];
+              let item = null;
+
+              if (parent_id !== 0) {
+                let parent = update.find(item => item.id === parent_id);
+                item = parent.children.find(item => item.id === id);
+              }
+              else {
+                item = update.find(item => item.id === id);
+              }
+
+              item.status = checked;
+
+              setSwitchLoading(true);
+              await api.patch(location.pathname, item).then(res => {
+                setData(update);
+                setSwitchLoading(false);
+              })
+                .catch(err => navigate('/error'));
             }}
           />
         )
