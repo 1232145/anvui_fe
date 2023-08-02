@@ -56,6 +56,18 @@ function NewsCategory() {
     fetchData();
   }, [])
 
+  const handleDelete = async (record) => {
+    setLoading(true);
+    await api.delete(location.pathname + `?id=${record.id}`).then(res => {
+      fetchData();
+      message.success(res.data.msg);
+    })
+      .catch(err => {
+        message.error(err?.response.data.err);
+        navigate('/error');
+      })
+  }
+
   // Define the table columns...
   const columns = [
     { title: 'Stt', dataIndex: 'stt', key: 'stt', sorter: (a, b) => a.stt - b.stt, width: 50 },
@@ -117,11 +129,11 @@ function NewsCategory() {
             onClick={() => console.log(record)}
           />
           <Popconfirm
-            title="Bạn chắc chắn muốn xóa tin này?"
+            title="Bạn chắc chắn muốn xóa. Các danh mục con của sanh mục này cũng sẽ bị xóa !"
             okText="Yes"
             cancelText="No"
             placement="topRight"
-            onConfirm={() => console.log(record)}
+            onConfirm={() => handleDelete(record)}
           >
             <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
           </Popconfirm>
