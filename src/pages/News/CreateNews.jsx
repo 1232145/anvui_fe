@@ -5,11 +5,12 @@ import CKEditorForm from '../../utility/CKEditorForm';
 import { PlusOutlined } from '@ant-design/icons';
 import { api } from '../../components/Api/api';
 import Loading from '../../components/Loading';
+import { convertFormData, replaceSpecialCharacters } from '../../tools';
 
 const { Option } = Select;
 const { Item } = Form;
 const { Panel } = Collapse;
-const host = 'https://cdn.anvui.vn/';
+// const host = 'https://cdn.anvui.vn/';
 
 function CreateNews() {
   //data handler
@@ -25,6 +26,7 @@ function CreateNews() {
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get('id');
   const url = location.pathname + `?id=${id}`;
+  const previous = '/news/news-list';
 
   const getCatIds = async (catIds) => {
     try {
@@ -57,7 +59,8 @@ function CreateNews() {
 
       procData.create_time = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN')
 
-      setImageHolder(host + procData.img);
+      console.log(procData);
+      setImageHolder(procData.img);
       setAreaData(procData.details);
       setData(procData);
     }
@@ -136,23 +139,32 @@ function CreateNews() {
     }, []);
 
     const convertedCatId = checkedIds.length > 0 ? '|' + checkedIds.join('|') + '|' : '||';
-
-    values.cat_id = convertedCatId;
-
     const [day, month, year] = data.create_time.split('/');
     const dateObject = new Date(`${year}-${month}-${day}`);
+
     values.create_time = Math.floor(dateObject.getTime() / 1000);
+    values.cat_id = convertedCatId;
+    values.img = values.img?.file;
+    values.alias = replaceSpecialCharacters(values.title);
+    values.status = values.status ? 1 : 0;
+    values.details = areaData;
+
+    const formData = convertFormData(values);
 
     setLoading(true);
-    await api.post(id ? url : location.pathname, values).then(res => {
+    await api.post(id ? url : location.pathname, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then(res => {
       setLoading(false);
       message.success(res.data.msg);
-      navigate('/news/news-list');
+      navigate(previous);
     })
-    .catch(err => {
-      navigate('/error');
-      message.error(err.response.data.err);
-    })
+      .catch(err => {
+        navigate('/error');
+        message.error(err.response.data.err);
+      })
   };
 
   return (
@@ -278,7 +290,7 @@ function CreateNews() {
                 <Button type="primary" htmlType="submit">
                   Lưu
                 </Button>
-                <Button type="default">Hủy</Button>
+                <Button type="default" onClick={() => navigate(previous)}>Hủy</Button>
               </Item>
             </Form>
           )

@@ -5,7 +5,7 @@ import Loading from '../../components/Loading';
 import { Table, Button, Switch, message, Popconfirm, Space, Image } from 'antd';
 import { EyeFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
-const host = 'https://cdn.anvui.vn/';
+// const host = 'https://cdn.anvui.vn/';
 
 function NewsList() {
   const [loading, setLoading] = useState(false);
@@ -60,7 +60,7 @@ function NewsList() {
       title: 'Ảnh đại diện', dataIndex: 'img', key: 'img', width: 125,
       render: (imgUrl, record) => {
         return imgUrl ? (
-          <Image src={host + imgUrl} width={100} height={100} alt={`Image ${record.key}`} />
+          <Image src={imgUrl} width={100} height={100} alt={`Image ${record.key}`} />
         ) : (
           <div>No Image</div>
         );

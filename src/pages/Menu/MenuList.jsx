@@ -175,7 +175,7 @@ const MenuList = () => {
 
   const handleSubmit = async () => {
     // Close the modal after handling the submission
-    const data = form.getFieldsValue();
+    let data = form.getFieldsValue();
 
     if (!data || !data.namemenu) {
       message.error('Vui lòng nhập tiêu đề.');
@@ -184,9 +184,7 @@ const MenuList = () => {
       message.error('Vui lòng nhập đường dẫn.');
     }
     else {
-      if (!data.sort) {
-        data.sort = 0;
-      }
+      data.status = data.status ? 1 : 0;
 
       setLoading(true);
       await api.post(location.pathname, data).then(res => {
