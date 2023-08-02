@@ -3,8 +3,8 @@ import { FileOutlined, HomeOutlined, FilePptOutlined, MenuOutlined, LaptopOutlin
 import Page from '../pages/Page';
 import CreateNews from '../pages/News/CreateNews';
 import NewsList from '../pages/News/NewsList';
-import NewsCatagory from '../pages/News/NewsCatagory';
-import CreateNewsCatagory from '../pages/News/CreateNewsCatagory';
+import NewsCategory from '../pages/News/NewsCategory';
+import CreateNewsCategory from '../pages/News/CreateNewsCategory';
 import MenuList from '../pages/Menu/MenuList';
 import Slide from '../pages/Template/Slide';
 import CustomCSS from '../pages/Template/CustomCSS';
@@ -19,8 +19,8 @@ export const publicRoutes = [
     { path: '/home', name: "Trang chủ", icon: <HomeOutlined />, component: Home },
     { path: '/news/create-news', name: "Thêm tin tức", component: CreateNews },
     { path: '/news/news-list', name: "Danh sách tin tức", component: NewsList },
-    { path: '/news/create-news-catagory', name: "Thêm danh mục tin tức", component: CreateNewsCatagory },
-    { path: '/news/news-catagory', name: "Danh mục tin tức", component: NewsCatagory },
+    { path: '/news/create-news-category', name: "Thêm danh mục tin tức", component: CreateNewsCategory },
+    { path: '/news/news-category', name: "Danh mục tin tức", component: NewsCategory },
     { path: '/page', name: "Page", icon: <FilePptOutlined />, component: Page },
     { path: 'page/create-page', name: "Thêm trang", component: CreatePage},
     { path: '/menu/menu-list', name: "Danh sách menu", component: MenuList },
@@ -39,8 +39,8 @@ export const navRoutes = [
         path: null, name: "Tin Tức", icon: <FileOutlined />, children: [
             { path: '/news/create-news', name: "Thêm tin tức", component: CreateNews },
             { path: '/news/news-list', name: "Danh sách tin tức", component: NewsList },
-            { path: '/news/create-news-catagory', name: "Thêm danh mục tin tức", component: CreateNewsCatagory },
-            { path: '/news/news-catagory', name: "Danh mục tin tức", component: NewsCatagory },
+            { path: '/news/create-news-category', name: "Thêm danh mục tin tức", component: CreateNewsCategory },
+            { path: '/news/news-category', name: "Danh mục tin tức", component: NewsCategory },
         ]
     },
     { path: '/page', component: Page, name: "Page", icon: <FilePptOutlined /> },
