@@ -89,6 +89,7 @@ function CreateNewsCategory() {
     try {
       setLoading(true);
       const res = await api.get(previous);
+      const resData = res.data.filter(item => item.parent_id === 0);
 
       const initialFormData = {
         title: '',
@@ -98,7 +99,7 @@ function CreateNewsCategory() {
         meta_keyword: '',
         meta_description: '',
         img: null,
-        parent_id: [...res.data, {id: 0, title: "Chọn danh mục cha"}]
+        parent_id: [...resData, {id: 0, title: "Chọn danh mục cha"}]
       };
   
       form.setFieldsValue({...initialFormData, parent_id: 0});
