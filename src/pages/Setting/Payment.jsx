@@ -82,6 +82,7 @@ function Payment() {
   }
 
   const cancel = () => {
+    setAreaData(data.paymentNote);
     form.resetFields();
     window.scrollTo(0, 0);
   }
