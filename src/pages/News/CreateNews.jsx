@@ -59,7 +59,6 @@ function CreateNews() {
 
       procData.create_time = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN')
 
-      console.log(procData);
       setImageHolder(procData.img);
       setAreaData(procData.details);
       setData(procData);
@@ -184,7 +183,7 @@ function CreateNews() {
               initialValues={data}
             >
               <Row gutter={20}>
-                <Col xs={24} md={16}>
+                <Col xs={25} md={17}>
                   <Item
                     label="Tiêu đề"
                     name="title"
@@ -204,7 +203,7 @@ function CreateNews() {
                     label="Nội dung"
                     name="details"
                   >
-                    <CKEditorForm data={areaData} handleChange={handleAreaData} />
+                    <CKEditorForm data={areaData} handleChange={handleAreaData} url="/news/create-news/upload-image"/>
                   </Item>
 
                   <Item style={{ marginTop: '10px' }}>
@@ -227,7 +226,7 @@ function CreateNews() {
                   </Item>
                 </Col>
 
-                <Col xs={24} md={8}>
+                <Col xs={12} md={7}>
                   <Collapse
                     bordered={true}
                     expandIconPosition="right"

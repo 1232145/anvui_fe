@@ -178,7 +178,7 @@ function Payment() {
               </Item>
 
               <Item label="Lưu ý khi đặt vé ">
-                <CKEditorForm data={areaData} handleChange={handleAreaData} />
+                <CKEditorForm data={areaData} handleChange={handleAreaData} url='/setting/payment/upload-image'/>
               </Item>
 
               <Item style={{ marginLeft: '45.5%' }}>

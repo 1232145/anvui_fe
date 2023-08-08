@@ -99,6 +99,7 @@ const CreatePage = () => {
                                     <CKEditorForm
                                         data={data?.content}
                                         handleChange={value => setData({ ...data, content: value })}
+                                        url='/page/create-page/upload-image'
                                     />
                                 </Item>
 

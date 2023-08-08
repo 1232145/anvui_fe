@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../components/Api/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
-import { Table, Button, Switch, message, Popconfirm, Space, Image } from 'antd';
+import { Table, Button, Switch, message, Popconfirm, Space } from 'antd';
 import { EyeFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function NewsCategory() {
