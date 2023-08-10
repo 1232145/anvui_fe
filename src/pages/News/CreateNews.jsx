@@ -5,7 +5,7 @@ import CKEditorForm from '../../utility/CKEditorForm';
 import { PlusOutlined } from '@ant-design/icons';
 import { api } from '../../components/Api/api';
 import Loading from '../../components/Loading';
-import { convertFormData, replaceSpecialCharacters } from '../../tools';
+import { convertFormData, replaceSpecialCharacters, cleanUnusedImages } from '../../tools';
 
 const { Option } = Select;
 const { Item } = Form;
@@ -19,6 +19,7 @@ function CreateNews() {
   const [data, setData] = useState({});
   const [areaData, setAreaData] = useState("");
   const [imageHolder, setImageHolder] = useState(null);
+  const [folderName, setFolderName] = useState('');
 
   //path handler
   const navigate = useNavigate();
@@ -53,11 +54,14 @@ function CreateNews() {
       const res = await api.get(url);
 
       let procData = res.data;
+      setFolderName(procData.create_time);
+      cleanUnusedImages(api, `${location.pathname}/delete-images`, procData.details, procData.create_time);
+
       const catIds = procData.cat_id.split('|').filter(item => item !== "").map(Number);
 
       procData.cat_id = await getCatIds(catIds);
 
-      procData.create_time = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN')
+      procData.create_time = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN');
 
       setImageHolder(procData.img);
       setAreaData(procData.details);
@@ -73,11 +77,13 @@ function CreateNews() {
   }
 
   const reset = async () => {
+    const currentTime = new Date();
+
     const initialFormData = {
       title: '',
       short: '',
       details: '',
-      create_time: new Date().toLocaleDateString('vi-VN'),
+      create_time: currentTime.toLocaleDateString('vi-VN'),
       status: false,
       id_lang: 11,
       cat_id: await getCatIds(),
@@ -87,6 +93,7 @@ function CreateNews() {
       img: null,
     };
 
+    setFolderName(Math.floor(currentTime.getTime() / 1000));
     setAreaData("");
     setImageHolder(null);
     setData(initialFormData);
@@ -138,15 +145,14 @@ function CreateNews() {
     }, []);
 
     const convertedCatId = checkedIds.length > 0 ? '|' + checkedIds.join('|') + '|' : '||';
-    const [day, month, year] = data.create_time.split('/');
-    const dateObject = new Date(`${year}-${month}-${day}`);
 
-    values.create_time = Math.floor(dateObject.getTime() / 1000);
+    values.create_time = folderName;
     values.cat_id = convertedCatId;
     values.img = values.img?.file;
     values.alias = replaceSpecialCharacters(values.title);
     values.status = values.status ? 1 : 0;
     values.details = areaData;
+    values.id_lang = values.id_lang ? values.id_lang : 11;
 
     const formData = convertFormData(values);
 
@@ -203,7 +209,12 @@ function CreateNews() {
                     label="Nội dung"
                     name="details"
                   >
-                    <CKEditorForm data={areaData} handleChange={handleAreaData} url="/news/create-news/upload-image"/>
+                    <CKEditorForm
+                      data={areaData}
+                      handleChange={handleAreaData}
+                      url="/news/create-news/upload-image"
+                      name={folderName}
+                    />
                   </Item>
 
                   <Item style={{ marginTop: '10px' }}>
