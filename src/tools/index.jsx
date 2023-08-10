@@ -89,8 +89,17 @@ function replaceSpecialCharacters(value) {
     };
 
     return value.toLowerCase()
-            .replace(/\s+/g, '-') // Replace spaces with hyphens
-            .replace(/./g, (char) => specialCharacters[char] || char) + '.html'; // Replace special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/./g, (char) => specialCharacters[char] || char) + '.html'; // Replace special characters
 }
 
-export {convertFormData, replaceSpecialCharacters};
+async function cleanUnusedImages(api, path, data) {
+    const publicIdRegex = /^.+\.cloudinary\.com\/(?:[^/]+\/)(?:(image|video)\/)?(?:(upload|fetch)\/)?(?:(?:[^_/]+_[^,/]+,?)*\/)?(?:v(\d+|\w{1,2})\/)?([^.\s]+)(?:\.(.+))?$/;
+    const urlRegex = /https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/[^/]+\/[^/]+\/[^/]+(?:\/[^/]+,[^/]+)?\/[^"]+/g;
+
+    const urls = data.match(urlRegex);
+    const publicIds = urls?.map(item => item.match(publicIdRegex)[4]);
+    await api.delete(`${path}?publicIds=${publicIds}`);
+}
+
+export { convertFormData, replaceSpecialCharacters, cleanUnusedImages };

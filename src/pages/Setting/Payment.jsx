@@ -6,6 +6,7 @@ import './payment.css';
 import { api } from '../../components/Api/api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CKEditorForm from '../../utility/CKEditorForm';
+import { cleanUnusedImages } from '../../tools';
 
 const { Item } = Form;
 
@@ -38,6 +39,7 @@ function Payment() {
       setLoading(true);
       const res = await api.get(location.pathname);
       const processedData = processDataIn(res.data);
+      cleanUnusedImages(api, `${location.pathname}/delete-images`, processedData.paymentNote);
       setData(processedData);
       setAreaData(processedData.paymentNote);
     }
