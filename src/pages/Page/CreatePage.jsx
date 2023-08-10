@@ -4,7 +4,7 @@ import { api } from '../../components/Api/api'
 import Loading from '../../components/Loading'
 import { Form, Input, Button, message } from 'antd';
 import CKEditorForm from '../../utility/CKEditorForm';
-import { replaceSpecialCharacters } from '../../tools';
+import { replaceSpecialCharacters, cleanUnusedImages } from '../../tools';
 
 const { Item } = Form;
 
@@ -15,6 +15,7 @@ const CreatePage = () => {
     const id = queryParams.get('id');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [folderName, setFolderName] = useState(null);
     const [form] = Form.useForm();
     const url = location.pathname + `?id=${id}`;
 
@@ -22,7 +23,12 @@ const CreatePage = () => {
         try {
             setLoading(true);
             const res = await api.get(url);
-            setData(res.data);
+            const resData = res.data;
+            const create_time = resData.create_time;
+
+            setFolderName(create_time);
+            cleanUnusedImages(api, `${location.pathname}/delete-images`, resData.content, create_time);
+            setData(resData);
         }
         catch (error) {
             navigate('/error')
@@ -35,6 +41,9 @@ const CreatePage = () => {
     useEffect(() => {
         if (id) {
             fetchData();
+        }
+        else {
+            setFolderName(Math.floor(Date.now() / 1000));
         }
     }, []);
 
@@ -56,8 +65,12 @@ const CreatePage = () => {
             message.error('Tiêu đề dài hơn 6 kí tự.');
         }
         else {
+            let values = data;
+            values.status = 1;
+            values.create_time = data.create_time ? data.create_time : folderName;
+
             setLoading(true);
-            await api.post(id ? url : location.pathname, data).then(res => {
+            await api.post(id ? url : location.pathname, values).then(res => {
                 setLoading(false);
                 message.success(res.data.msg);
                 navigate('/page');
@@ -100,6 +113,7 @@ const CreatePage = () => {
                                         data={data?.content}
                                         handleChange={value => setData({ ...data, content: value })}
                                         url='/page/create-page/upload-image'
+                                        name={folderName}
                                     />
                                 </Item>
 
