@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../../components/Api/api'
 import Loading from '../../components/Loading'
@@ -15,7 +15,8 @@ const CreatePage = () => {
     const id = queryParams.get('id');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [folderName, setFolderName] = useState(null);
+    const folderName = useRef(null);
+    const content = useRef(null);
     const [form] = Form.useForm();
     const url = location.pathname + `?id=${id}`;
 
@@ -26,8 +27,9 @@ const CreatePage = () => {
             const resData = res.data;
             const create_time = resData.create_time;
 
-            setFolderName(create_time);
-            cleanUnusedImages(api, `${location.pathname}/clean-images`, resData.content, create_time);
+            folderName.current = create_time;
+            content.current = resData.content;
+
             setData(resData);
         }
         catch (error) {
@@ -43,7 +45,11 @@ const CreatePage = () => {
             fetchData();
         }
         else {
-            setFolderName(Math.floor(Date.now() / 1000));
+            folderName.current = Math.floor(Date.now() / 1000);
+        }
+
+        return () => {
+            cleanUnusedImages(api, `${location.pathname}/clean-images`, content.current, folderName.current);
         }
     }, []);
 
@@ -51,6 +57,10 @@ const CreatePage = () => {
         const value = e.currentTarget.value;
 
         setData({ ...data, title: value, alias: replaceSpecialCharacters(value) });
+    }
+
+    const handleCKEditorChange = (value) => {
+        content.current = value;
     }
 
     const cancel = () => {
@@ -68,6 +78,7 @@ const CreatePage = () => {
             let values = data;
             values.status = 1;
             values.create_time = data.create_time ? data.create_time : folderName;
+            values.content = content.current;
 
             setLoading(true);
             await api.post(id ? url : location.pathname, values).then(res => {
@@ -110,10 +121,10 @@ const CreatePage = () => {
                                 </Item>
                                 <Item>
                                     <CKEditorForm
-                                        data={data?.content}
-                                        handleChange={value => setData({ ...data, content: value })}
+                                        data={content.current}
+                                        handleChange={value => handleCKEditorChange(value)}
                                         url='/page/create-page/upload-image'
-                                        name={folderName}
+                                        name={folderName.current}
                                     />
                                 </Item>
 
