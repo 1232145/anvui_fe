@@ -1,3 +1,8 @@
+/**
+ * Convert object to formData
+ * @param {*} obj 
+ * @returns formData with obj values
+ */
 function convertFormData(obj) {
     const formData = new FormData();
 
@@ -17,6 +22,11 @@ function convertFormData(obj) {
     return formData;
 }
 
+/**
+ * Convert given value (in special characters of Vietnamese) to lowercase English in a link format (an-vui.html)
+ * @param {*} value Vietnamese or English text
+ * @returns an English link format of the given text
+ */
 function replaceSpecialCharacters(value) {
     const specialCharacters = {
         'á': 'a',
@@ -93,14 +103,25 @@ function replaceSpecialCharacters(value) {
         .replace(/./g, (char) => specialCharacters[char] || char) + '.html'; // Replace special characters
 }
 
+/**
+ * Call the delete method to clean any unused urls from CKEditor Form.
+ * @param {*} api the axios instance to handle request
+ * @param {*} path the endpoint for api
+ * @param {*} data the raw data of ckeditor
+ * @param {*} folder the folder to be cleaned (is the create_time of the object for uniqueness and easy access)
+ */
 async function cleanUnusedImages(api, path, data, folder) {
     let publicIds = [];
 
     if (data) {
+        //regex to get the publicId of url
         const publicIdRegex = /^.+\.cloudinary\.com\/(?:[^/]+\/)(?:(image|video)\/)?(?:(upload|fetch)\/)?(?:(?:[^_/]+_[^,/]+,?)*\/)?(?:v(\d+|\w{1,2})\/)?([^.\s]+)(?:\.(.+))?$/;
+        //regex to get the url
         const urlRegex = /https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/[^/]+\/[^/]+\/[^/]+(?:\/[^/]+,[^/]+)?\/[^"]+/g;
         const urls = data.match(urlRegex);
-        publicIds = urls?.map(item => item.match(publicIdRegex)[4]);
+        const ids = urls?.map(item => item.match(publicIdRegex)[4]);
+        //in case ids is undefined
+        publicIds = ids ? ids : [];
     }
 
     const link = `${path}?publicIds=${publicIds}${folder && `&folder=${folder}`}`;
@@ -108,10 +129,4 @@ async function cleanUnusedImages(api, path, data, folder) {
     await api.delete(link);
 }
 
-async function cleanUnusedFolders(api, path, folders) {
-    const link = `${path}?folders=${folders}`;
-
-    await api.delete(link);
-}
-
-export { convertFormData, replaceSpecialCharacters, cleanUnusedImages, cleanUnusedFolders };
+export { convertFormData, replaceSpecialCharacters, cleanUnusedImages };

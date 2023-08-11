@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Form, Input, Switch, Select, Button, Row, Col, Collapse, Upload, Image, message, Checkbox } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CKEditorForm from '../../utility/CKEditorForm';
@@ -19,7 +19,8 @@ function CreateNews() {
   const [data, setData] = useState({});
   const [areaData, setAreaData] = useState("");
   const [imageHolder, setImageHolder] = useState(null);
-  const [folderName, setFolderName] = useState('');
+  const createTime = useRef(Math.floor(Date.now() / 1000));
+  const cleanData = useRef(areaData);
 
   //path handler
   const navigate = useNavigate();
@@ -54,17 +55,18 @@ function CreateNews() {
       const res = await api.get(url);
 
       let procData = res.data;
-      setFolderName(procData.create_time);
-      cleanUnusedImages(api, `${location.pathname}/clean-images`, procData.details, procData.create_time);
-
+      const details = procData.details;
+      const create_time = procData.create_time;
       const catIds = procData.cat_id.split('|').filter(item => item !== "").map(Number);
 
       procData.cat_id = await getCatIds(catIds);
 
-      procData.create_time = new Date(procData.create_time * 1000).toLocaleDateString('vi-VN');
+      createTime.current = create_time;
+      procData.create_time = new Date(create_time * 1000).toLocaleDateString('vi-VN');
 
       setImageHolder(procData.img);
-      setAreaData(procData.details);
+      cleanData.current = details;
+      setAreaData(details);
       setData(procData);
     }
     catch (err) {
@@ -77,13 +79,11 @@ function CreateNews() {
   }
 
   const reset = async () => {
-    const currentTime = new Date();
-
     const initialFormData = {
       title: '',
       short: '',
       details: '',
-      create_time: currentTime.toLocaleDateString('vi-VN'),
+      create_time: new Date(createTime.current * 1000).toLocaleDateString('vi-VN'),
       status: false,
       id_lang: 11,
       cat_id: await getCatIds(),
@@ -93,7 +93,6 @@ function CreateNews() {
       img: null,
     };
 
-    setFolderName(Math.floor(currentTime.getTime() / 1000));
     setAreaData("");
     setImageHolder(null);
     setData(initialFormData);
@@ -106,6 +105,10 @@ function CreateNews() {
     }
     else {
       reset();
+    }
+
+    return () => {
+      cleanUnusedImages(api, `${location.pathname}/clean-images`, cleanData.current, createTime.current);
     }
   }, [id])
 
@@ -146,13 +149,15 @@ function CreateNews() {
 
     const convertedCatId = checkedIds.length > 0 ? '|' + checkedIds.join('|') + '|' : '||';
 
-    values.create_time = folderName;
+    values.create_time = createTime.current;
     values.cat_id = convertedCatId;
     values.img = values.img?.file;
     values.alias = replaceSpecialCharacters(values.title);
     values.status = values.status ? 1 : 0;
     values.details = areaData;
     values.id_lang = values.id_lang ? values.id_lang : 11;
+
+    cleanData.current = areaData;
 
     const formData = convertFormData(values);
 
@@ -213,7 +218,7 @@ function CreateNews() {
                       data={areaData}
                       handleChange={handleAreaData}
                       url="/news/create-news/upload-image"
-                      name={folderName}
+                      name={createTime.current}
                     />
                   </Item>
 
@@ -297,7 +302,7 @@ function CreateNews() {
               </Row>
 
               <Item style={{ marginTop: '10px' }}>
-                <Button type="primary" htmlType="submit" style={{marginRight: '7.5px'}}>
+                <Button type="primary" htmlType="submit" style={{ marginRight: '7.5px' }}>
                   Lưu
                 </Button>
                 <Button type="default" onClick={() => navigate(previous)}>Hủy</Button>
