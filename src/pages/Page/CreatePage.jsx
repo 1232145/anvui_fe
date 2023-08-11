@@ -13,9 +13,9 @@ const CreatePage = () => {
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     const id = queryParams.get('id');
-    const [data, setData] = useState(null);
+    const [data, setData] = useState({});
     const [loading, setLoading] = useState(false);
-    const folderName = useRef(null);
+    const folderName = useRef(Math.floor(Date.now() / 1000));
     const content = useRef(null);
     const [form] = Form.useForm();
     const url = location.pathname + `?id=${id}`;
@@ -43,9 +43,6 @@ const CreatePage = () => {
     useEffect(() => {
         if (id) {
             fetchData();
-        }
-        else {
-            folderName.current = Math.floor(Date.now() / 1000);
         }
 
         return () => {
@@ -77,7 +74,7 @@ const CreatePage = () => {
         else {
             let values = data;
             values.status = 1;
-            values.create_time = data.create_time ? data.create_time : folderName;
+            values.create_time = data.create_time ? data.create_time : folderName.current;
             values.content = content.current;
 
             setLoading(true);
