@@ -39,7 +39,7 @@ function Payment() {
       setLoading(true);
       const res = await api.get(location.pathname);
       const processedData = processDataIn(res.data);
-      cleanUnusedImages(api, `${location.pathname}/delete-images`, processedData.paymentNote);
+      cleanUnusedImages(api, `${location.pathname}/clean-images`, processedData.paymentNote);
       setData(processedData);
       setAreaData(processedData.paymentNote);
     }

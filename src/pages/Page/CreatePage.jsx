@@ -27,7 +27,7 @@ const CreatePage = () => {
             const create_time = resData.create_time;
 
             setFolderName(create_time);
-            cleanUnusedImages(api, `${location.pathname}/delete-images`, resData.content, create_time);
+            cleanUnusedImages(api, `${location.pathname}/clean-images`, resData.content, create_time);
             setData(resData);
         }
         catch (error) {

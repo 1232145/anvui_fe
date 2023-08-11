@@ -55,7 +55,7 @@ function CreateNews() {
 
       let procData = res.data;
       setFolderName(procData.create_time);
-      cleanUnusedImages(api, `${location.pathname}/delete-images`, procData.details, procData.create_time);
+      cleanUnusedImages(api, `${location.pathname}/clean-images`, procData.details, procData.create_time);
 
       const catIds = procData.cat_id.split('|').filter(item => item !== "").map(Number);
 
@@ -297,7 +297,7 @@ function CreateNews() {
               </Row>
 
               <Item style={{ marginTop: '10px' }}>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" style={{marginRight: '7.5px'}}>
                   Lưu
                 </Button>
                 <Button type="default" onClick={() => navigate(previous)}>Hủy</Button>
