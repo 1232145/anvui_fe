@@ -1,5 +1,5 @@
 import { Form, Checkbox, Button, Input, Space, message } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Loading from '../../components/Loading';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import './payment.css';
@@ -15,6 +15,7 @@ function Payment() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
   const [areaData, setAreaData] = useState("");
+  const cleanData = useRef(areaData);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,10 +39,12 @@ function Payment() {
     try {
       setLoading(true);
       const res = await api.get(location.pathname);
-      const processedData = processDataIn(res.data);
-      cleanUnusedImages(api, `${location.pathname}/clean-images`, processedData.paymentNote);
-      setData(processedData);
-      setAreaData(processedData.paymentNote);
+      const procData = processDataIn(res.data);
+      const paymentNote = procData.paymentNote
+
+      cleanData.current = paymentNote;
+      setData(procData);
+      setAreaData(paymentNote);
     }
     catch (err) {
       console.log(err);
@@ -54,6 +57,10 @@ function Payment() {
 
   useEffect(() => {
     fetchData();
+
+    return () => {
+      cleanUnusedImages(api, `${location.pathname}/clean-images`, cleanData.current);
+    }
   }, [])
 
   const onFinish = async (values) => {
@@ -180,7 +187,7 @@ function Payment() {
               </Item>
 
               <Item label="Lưu ý khi đặt vé ">
-                <CKEditorForm data={areaData} handleChange={handleAreaData} url='/setting/payment/upload-image'/>
+                <CKEditorForm data={areaData} handleChange={handleAreaData} url='/setting/payment/upload-image' />
               </Item>
 
               <Item style={{ marginLeft: '45.5%' }}>
