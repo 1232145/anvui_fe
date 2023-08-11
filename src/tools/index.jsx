@@ -108,4 +108,10 @@ async function cleanUnusedImages(api, path, data, folder) {
     await api.delete(link);
 }
 
-export { convertFormData, replaceSpecialCharacters, cleanUnusedImages };
+async function cleanUnusedFolders(api, path, folders) {
+    const link = `${path}?folders=${folders}`;
+
+    await api.delete(link);
+}
+
+export { convertFormData, replaceSpecialCharacters, cleanUnusedImages, cleanUnusedFolders };

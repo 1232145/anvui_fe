@@ -55,7 +55,7 @@ const Page = () => {
                 }
 
                 const handleDeleteEntry = async (item) => {
-                    const query = `?id=${item.id}`;
+                    const query = `?id=${item.id}&folder=${item.create_time}`;
                     setLoading(true);
                     await api.delete(location.pathname + query).then(res => {
                         fetchData();

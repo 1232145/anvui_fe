@@ -57,7 +57,7 @@ const CreatePage = () => {
     }
 
     const handleCKEditorChange = (value) => {
-        content.current = value;
+        setData({...data, content: value});
     }
 
     const cancel = () => {
@@ -75,7 +75,7 @@ const CreatePage = () => {
             let values = data;
             values.status = 1;
             values.create_time = data.create_time ? data.create_time : folderName.current;
-            values.content = content.current;
+            content.current = values.content;
 
             setLoading(true);
             await api.post(id ? url : location.pathname, values).then(res => {
@@ -118,7 +118,7 @@ const CreatePage = () => {
                                 </Item>
                                 <Item>
                                     <CKEditorForm
-                                        data={content.current}
+                                        data={data.content}
                                         handleChange={value => handleCKEditorChange(value)}
                                         url='/page/create-page/upload-image'
                                         name={folderName.current}
