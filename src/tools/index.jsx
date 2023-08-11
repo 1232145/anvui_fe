@@ -94,14 +94,17 @@ function replaceSpecialCharacters(value) {
 }
 
 async function cleanUnusedImages(api, path, data, folder) {
-    const publicIdRegex = /^.+\.cloudinary\.com\/(?:[^/]+\/)(?:(image|video)\/)?(?:(upload|fetch)\/)?(?:(?:[^_/]+_[^,/]+,?)*\/)?(?:v(\d+|\w{1,2})\/)?([^.\s]+)(?:\.(.+))?$/;
-    const urlRegex = /https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/[^/]+\/[^/]+\/[^/]+(?:\/[^/]+,[^/]+)?\/[^"]+/g;
+    let publicIds = [];
 
-    const urls = data.match(urlRegex);
-    const publicIds = urls?.map(item => item.match(publicIdRegex)[4]);
-    
+    if (data) {
+        const publicIdRegex = /^.+\.cloudinary\.com\/(?:[^/]+\/)(?:(image|video)\/)?(?:(upload|fetch)\/)?(?:(?:[^_/]+_[^,/]+,?)*\/)?(?:v(\d+|\w{1,2})\/)?([^.\s]+)(?:\.(.+))?$/;
+        const urlRegex = /https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/[^/]+\/[^/]+\/[^/]+(?:\/[^/]+,[^/]+)?\/[^"]+/g;
+        const urls = data.match(urlRegex);
+        publicIds = urls?.map(item => item.match(publicIdRegex)[4]);
+    }
+
     const link = `${path}?publicIds=${publicIds}${folder && `&folder=${folder}`}`;
-    
+
     await api.delete(link);
 }
 
