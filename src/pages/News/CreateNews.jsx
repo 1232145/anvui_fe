@@ -44,7 +44,12 @@ function CreateNews() {
       }))
     }
     catch (err) {
-      navigate('/error');
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
