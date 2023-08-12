@@ -34,7 +34,7 @@ const CreatePage = () => {
 
             setData(resData);
         }
-        catch (error) {
+        catch (err) {
             if (err === 401) {
                 auth.signOut(() => navigate('/login'));
               }
