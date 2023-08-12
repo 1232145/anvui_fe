@@ -127,7 +127,7 @@ class UploadAdapter {
     // XMLHttpRequest.setRequestHeader() to set the request headers containing
     // the CSRF token generated earlier by your application.
 
-    this.xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('accessToken')}`);
+    this.xhr.setRequestHeader('Authorization', `Bearer ${sessionStorage.getItem('accessToken')}`);
 
     // Send the request.
     this.xhr.send(data);

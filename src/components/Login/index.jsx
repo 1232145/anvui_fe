@@ -5,12 +5,14 @@ import { api } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Loading';
 import ErrorLogin from '../../pages/Error/ErrorLoginPage';
+import { useAuth } from '../Auth';
 
 const { Title } = Typography;
 const url = '/login';
 
-const Login = ({ setLogin }) => {
+const Login = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errMsg, setErrMsg] = useState('');
@@ -26,11 +28,8 @@ const Login = ({ setLogin }) => {
         setErrMsg("Không thể đăng nhập.");
       }
       else {
-        localStorage.setItem('accessToken', data.access_token);
-        localStorage.setItem('username', data.username);
-        setLogin(true);
+        auth.signIn(data.username, data.access_token, () => navigate('/home'));
         message.success("Đăng nhập thành công");
-        navigate('/home');
       }
     }
     catch (err) {

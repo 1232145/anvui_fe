@@ -2,18 +2,19 @@ import React from 'react';
 import { Layout, Button, Dropdown, Avatar } from 'antd';
 import './header.css';
 import { MenuOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Auth';
 
 const { Header } = Layout;
 const userImage = 'https://www.kindpng.com/picc/m/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png';
 
 const MyHeader = ({ menuCollapsed, setMenuCollapsed }) => {
-  const username = localStorage.getItem('username');
-  const displayName = username ? username : "Người dùng"
+  const navigate = useNavigate();
+  const auth = useAuth();
+  const displayName = auth.user ? auth.user : "Người dùng";
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('username');
-    window.location.reload();
+    auth.signOut(() => navigate('/login'));
   }
 
   const items = [

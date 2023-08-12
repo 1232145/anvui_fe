@@ -3,15 +3,17 @@ const url = 'https://anvui-be.vercel.app';
 const testUrl = 'http://localhost:4000'
 
 const api = axios.create({
-  baseURL: testUrl, 
+  baseURL: testUrl,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
+const token = 'accessToken';
+
 api.interceptors.request.use(
   (response) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = sessionStorage.getItem(token);
     if (accessToken) {
       response.headers['Authorization'] = `Bearer ${accessToken}`;
     }
@@ -22,4 +24,13 @@ api.interceptors.request.use(
   }
 );
 
-export {api}
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error.response.status);
+  }
+)
+
+export { api }
