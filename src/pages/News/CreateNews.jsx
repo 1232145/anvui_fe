@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import CKEditorForm from '../../utility/CKEditorForm';
 import { PlusOutlined } from '@ant-design/icons';
 import { api } from '../../components/Api/api';
+import { useAuth } from '../../components/Auth';
 import Loading from '../../components/Loading';
 import { convertFormData, replaceSpecialCharacters, cleanUnusedImages } from '../../tools';
 
@@ -21,6 +22,7 @@ function CreateNews() {
   const [imageHolder, setImageHolder] = useState(null);
   const createTime = useRef(Math.floor(Date.now() / 1000));
   const cleanData = useRef(areaData);
+  const auth = useAuth();
 
   //path handler
   const navigate = useNavigate();
@@ -70,8 +72,12 @@ function CreateNews() {
       setData(procData);
     }
     catch (err) {
-      navigate('/error');
-      message.error(err.response.data.err);
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -173,7 +179,6 @@ function CreateNews() {
     })
       .catch(err => {
         navigate('/error');
-        message.error(err.response.data.err);
       })
   };
 

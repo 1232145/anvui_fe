@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { Alert, Form, Input, Space, Button, message } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useAuth } from '../../components/Auth';
 
 function Domain() {
   const { Item } = Form;
@@ -12,6 +13,7 @@ function Domain() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const auth = useAuth();
 
   const fetchData = async () => {
     try {
@@ -21,8 +23,12 @@ function Domain() {
       setData({ domain: arrayData });
     }
     catch (err) {
-      console.log(err);
-      navigate('/error')
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -54,7 +60,6 @@ function Domain() {
       })
       .catch(err => {
         navigate('/error');
-        message.error(err.response.data.err);
       });
   }
 

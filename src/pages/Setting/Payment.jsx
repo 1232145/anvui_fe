@@ -7,6 +7,7 @@ import { api } from '../../components/Api/api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CKEditorForm from '../../utility/CKEditorForm';
 import { cleanUnusedImages } from '../../tools';
+import { useAuth } from '../../components/Auth';
 
 const { Item } = Form;
 
@@ -18,6 +19,7 @@ function Payment() {
   const cleanData = useRef(areaData);
   const navigate = useNavigate();
   const location = useLocation();
+  const auth = useAuth();
 
   const processDataIn = (data) => {
     data.payment_info = JSON.parse(data.payment_info);
@@ -47,8 +49,12 @@ function Payment() {
       setAreaData(paymentNote);
     }
     catch (err) {
-      console.log(err);
-      navigate('/error');
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -86,7 +92,6 @@ function Payment() {
     })
       .catch(err => {
         navigate('/error');
-        message.error(err.response.data.err);
       });
   }
 

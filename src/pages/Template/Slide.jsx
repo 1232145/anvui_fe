@@ -4,6 +4,7 @@ import Loading from '../../components/Loading';
 import { api } from '../../components/Api/api';
 import { Upload, message, Alert, Image, Card } from 'antd';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useAuth } from '../../components/Auth';
 import './slide.css';
 
 const { Dragger } = Upload;
@@ -63,6 +64,7 @@ const Slide = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const bannerUploadText =
     'Kích thước hiển thị tốt nhất 1440*480px, hãy chọn các ảnh có cùng chiều dài, chiều rộng, chiều dài >= 1440px, chiều rộng >= 480px để hiển thị đạt chất lượng tốt nhất !';
@@ -86,7 +88,12 @@ const Slide = () => {
 
       setData(groupedData);
     } catch (err) {
-      navigate('/error');
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     } finally {
       setLoading(false);
     }
@@ -110,7 +117,6 @@ const Slide = () => {
       })
       .catch(err => {
         navigate('/error')
-        message.error(err.response.data.err);
       });
   };
 

@@ -5,6 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { api } from '../../components/Api/api';
 import Loading from '../../components/Loading';
 import { replaceSpecialCharacters, convertFormData } from '../../tools';
+import { useAuth } from '../../components/Auth';
 
 const { Item } = Form;
 const { Panel } = Collapse;
@@ -15,6 +16,7 @@ function CreateNewsCategory() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
   const [imageHolder, setImageHolder] = useState(null);
+  const auth = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,8 +35,12 @@ function CreateNewsCategory() {
       setImageHolder(resData.img);
     }
     catch (err) {
-      console.log(err);
-      navigate('/error');
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -81,7 +87,6 @@ function CreateNewsCategory() {
     })
       .catch(err => {
         navigate('/error');
-        message.error(err.response.data.err);
       })
   }
 
@@ -107,7 +112,6 @@ function CreateNewsCategory() {
       setData(initialFormData);
     }
     catch (err) {
-      console.log(err);
       navigate('/error');
     }
     finally {

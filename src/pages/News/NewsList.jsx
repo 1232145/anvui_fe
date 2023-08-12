@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { Table, Button, Switch, message, Popconfirm, Space, Image } from 'antd';
 import { EyeFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useAuth } from '../../components/Auth';
 
 // const host = 'https://cdn.anvui.vn/';
 
@@ -13,6 +14,7 @@ function NewsList() {
   const [switchLoading, setSwitchLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const fetchData = async () => {
     try {
@@ -28,7 +30,12 @@ function NewsList() {
       setData(procData);
     }
     catch (err) {
-      navigate('/error');
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);

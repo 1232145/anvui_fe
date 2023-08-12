@@ -5,6 +5,7 @@ import { Form, Input, Button, Checkbox, Space, Select, Row, Col, Upload, message
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../components/Auth';
 
 const { Option } = Select;
 const { Item } = Form;
@@ -45,6 +46,7 @@ function Home() {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
+  const auth = useAuth();
 
   const fetchData = async () => {
     try {
@@ -57,8 +59,12 @@ function Home() {
       resetImageHolder(procData);
     }
     catch (err) {
-      console.log(err);
-      navigate('/error')
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -136,6 +142,10 @@ function Home() {
       },
     }).then(res => {
       res.data.forEach(item => values[item.name] = item.url);
+    })
+    .catch(err => {
+      navigate('/error');
+      return;
     });
     await api.put(location.pathname, processData(values, "out"))
       .then(res => {
@@ -146,7 +156,6 @@ function Home() {
       })
       .catch(err => {
         navigate('/error');
-        message.error(err.response.data.err);
       });
   };
 

@@ -4,6 +4,8 @@ import { api } from "../../components/Api/api";
 import Loading from "../../components/Loading";
 import { Table, Input, Select, Row, Col, Button, Popconfirm, message } from 'antd';
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useAuth } from "../../components/Auth";
+
 const { Option } = Select;
 
 const Page = () => {
@@ -14,6 +16,7 @@ const Page = () => {
     const [pageSize, setPageSize] = useState(10);
     const [searchText, setSearchText] = useState('');
     const [filteredData, setfilteredData] = useState(data);
+    const auth = useAuth();
 
     const fetchData = async () => {
         try {
@@ -24,7 +27,12 @@ const Page = () => {
             setfilteredData(pages);
         }
         catch (err) {
-            navigate('/error');
+            if (err === 401) {
+                auth.signOut(() => navigate('/login'));
+              }
+              else {
+                navigate('/error');
+              }
         }
         finally {
             setLoading(false);
@@ -63,7 +71,6 @@ const Page = () => {
                     })
                         .catch(err => {
                             navigate('/error');
-                            message.error(err.response.data.err);
                         });
                 }
 

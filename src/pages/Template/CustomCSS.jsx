@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { api } from '../../components/Api/api';
 import { Form, Input, Button, message } from 'antd';
+import { useAuth } from '../../components/Auth';
 
 const { Item } = Form;
 
@@ -12,6 +13,7 @@ function CSSCustom() {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
+  const auth = useAuth();
 
   const fetchData = async () => {
     try {
@@ -20,7 +22,12 @@ function CSSCustom() {
       setData(res.data);
     }
     catch (err) {
-      navigate('/error')
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -40,7 +47,6 @@ function CSSCustom() {
       })
       .catch(err => {
         navigate('/error');
-        message.error(err.response.data.err);
       });
   }
 

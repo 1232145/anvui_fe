@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { Table, Button, Switch, message, Popconfirm, Space } from 'antd';
 import { EyeFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useAuth } from '../../components/Auth';
 
 function NewsCategory() {
   const [loading, setLoading] = useState(false);
@@ -11,6 +12,7 @@ function NewsCategory() {
   const [switchLoading, setSwitchLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const fetchData = async () => {
     try {
@@ -44,8 +46,12 @@ function NewsCategory() {
       setData(procData);
     }
     catch (err) {
-      console.log(err);
-      navigate('/error');
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -67,7 +73,6 @@ function NewsCategory() {
       message.success(res.data.msg);
     })
       .catch(err => {
-        message.error(err?.response.data.err);
         navigate('/error');
       })
   }

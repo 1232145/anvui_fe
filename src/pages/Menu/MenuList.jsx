@@ -4,6 +4,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { api } from '../../components/Api/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
+import { useAuth } from '../../components/Auth';
 
 const { Option } = Select;
 const { Item } = Form;
@@ -17,6 +18,7 @@ const MenuList = () => {
   const [disable, setDisable] = useState(false);
   const [switchLoading, setSwitchLoading] = useState(false);
   const [form] = Form.useForm();
+  const auth = useAuth();
 
   const fetchData = async () => {
     try {
@@ -77,8 +79,12 @@ const MenuList = () => {
       setMenuData(temp);
     }
     catch (err) {
-      console.log(err);
-      navigate('/error');
+      if (err === 401) {
+        auth.signOut(() => navigate('/login'));
+      }
+      else {
+        navigate('/error');
+      }
     }
     finally {
       setLoading(false);
@@ -210,7 +216,6 @@ const MenuList = () => {
       })
         .catch(error => {
           navigate('/error');
-          message.error(error.response.data.err);
         });
     }
   };

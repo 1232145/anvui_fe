@@ -5,6 +5,7 @@ import Loading from '../../components/Loading'
 import { Form, Input, Button, message } from 'antd';
 import CKEditorForm from '../../utility/CKEditorForm';
 import { replaceSpecialCharacters, cleanUnusedImages } from '../../tools';
+import { useAuth } from '../../components/Auth';
 
 const { Item } = Form;
 
@@ -19,6 +20,7 @@ const CreatePage = () => {
     const content = useRef(null);
     const [form] = Form.useForm();
     const url = location.pathname + `?id=${id}`;
+    const auth = useAuth();
 
     const fetchData = async () => {
         try {
@@ -33,7 +35,12 @@ const CreatePage = () => {
             setData(resData);
         }
         catch (error) {
-            navigate('/error')
+            if (err === 401) {
+                auth.signOut(() => navigate('/login'));
+              }
+              else {
+                navigate('/error');
+              }
         }
         finally {
             setLoading(false);
@@ -84,7 +91,6 @@ const CreatePage = () => {
                 navigate('/page');
             }).catch(err => {
                 navigate('/error');
-                message.error(err.response.data.err);
             });
         }
     }
