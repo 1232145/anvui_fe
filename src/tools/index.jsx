@@ -126,7 +126,13 @@ async function cleanUnusedImages(api, path, data, folder) {
 
     const link = `${path}?publicIds=${publicIds}${folder && `&folder=${folder}`}`;
 
-    await api.delete(link);
+    try {
+        await api.delete(link);
+        return true;
+    }
+    catch (error) {
+        return false;
+    }
 }
 
 export { convertFormData, replaceSpecialCharacters, cleanUnusedImages };

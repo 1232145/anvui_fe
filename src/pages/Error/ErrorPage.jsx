@@ -9,10 +9,10 @@ const ErrorPage = () => {
       <Result
         status="500"
         title="500"
-        subTitle="Sorry, something went wrong."
+        subTitle="Xin lỗi, đã có 1 sự cố khi truy cập :("
         extra={
           <Button type="primary">
-          <Link to="/home">Back Home</Link>
+          <Link to="/home">Quay lại trang chủ</Link>
         </Button>
         }
       />
