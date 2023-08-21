@@ -141,17 +141,26 @@ function Home() {
         'Content-Type': 'multipart/form-data',
       },
     }).then(res => {
-      res.data.forEach(item => values[item.name] = item.url);
+      setLoading(false);
+      const newImageHolder = { ...imageHolder };
+      res.data.forEach(item => {
+        const { url, name } = item;
+
+        values[name] = url;
+        newImageHolder[name] = url;
+      });
     })
-    .catch(err => {
-      navigate('/error');
-      return;
-    });
+      .catch(err => {
+        navigate('/error');
+        return;
+      });
+
+    const tmp = { ...values };
     await api.put(location.pathname, processData(values, "out"))
       .then(res => {
-        fetchData();
+        setData(tmp);
+        form.setFieldsValue(tmp);
         window.scrollTo(0, 0);
-        setLoading(false);
         message.success(res.data.msg);
       })
       .catch(err => {
